@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
   
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
   
   <!-- GSAP -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -22,7 +22,7 @@
       --hamuq-orange: #f58220;
       --hamuq-orange-light: #feecd9;
       --hamuq-gray: #4b4b4b;
-      --hamuq-gray-light: #f5f7f9;
+      --hamuq-gray-light: #e2e8f0;
       --white: #ffffff;
       --danger: #ef4444;
       --warning: #f59e0b;
@@ -38,17 +38,15 @@
     body {
       background-color: #1a1a1a;
       font-family: 'Open Sans', sans-serif;
-      overflow: hidden;
-      height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
     }
 
     #presentation-wrapper {
       width: 100%;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      min-height: 100vh;
     }
 
     /* Progress Bar */
@@ -66,9 +64,11 @@
     /* Presentation Container */
     #presentation-container {
       width: min(100vw, 1400px);
-      height: 100vh;
+      min-height: 100vh;
       position: relative;
-      background-color: var(--white);
+      display: flex;
+      flex-direction: column;
+      background-color: #f7fafc;
       box-shadow: 0 0 60px rgba(0,0,0,0.5);
       overflow: hidden;
     }
@@ -116,8 +116,9 @@
     }
 
     .slide-inner {
-      width: min(1000px, 90vw);
-      height: 90vh;
+      width: min(1000px, 92vw);
+      min-height: 100vh;
+      padding: 90px 20px 90px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -138,7 +139,7 @@
     .slide h2 {
       font-family: 'Montserrat', sans-serif;
       font-size: clamp(1.5rem, 6vw, 2.5rem);
-      color: var(--hamuq-gray);
+      color: #2d3748;
       margin-bottom: 30px;
       font-weight: 700;
     }
@@ -146,14 +147,14 @@
     .slide h3 {
       font-family: 'Montserrat', sans-serif;
       font-size: clamp(1rem, 4vw, 1.5rem);
-      color: var(--hamuq-gray);
+      color: #2d3748;
       margin: 15px 0;
       font-weight: 600;
     }
 
     .slide p {
       font-size: clamp(0.9rem, 3vw, 1.1rem);
-      color: var(--hamuq-gray);
+      color: #2d3748;
       line-height: 1.6;
       margin: 10px 0;
       max-width: 900px;
@@ -190,7 +191,7 @@
     }
 
     .card:hover {
-      transform: translateY(-8px) scale(1.05);
+      transform: translateY(-4px) scale(1.02);
       box-shadow: 0 20px 40px rgba(18, 140, 130, 0.2);
       border-color: var(--hamuq-teal);
     }
@@ -211,7 +212,7 @@
 
     .card-text {
       font-size: 0.95rem;
-      color: var(--hamuq-gray);
+      color: #2d3748;
       line-height: 1.5;
     }
 
@@ -258,7 +259,7 @@
     .slide-counter {
       font-family: 'Montserrat', sans-serif;
       font-weight: 600;
-      color: var(--hamuq-gray);
+      color: #2d3748;
       font-size: 16px;
       background: rgba(255, 255, 255, 0.95);
       padding: 10px 18px;
@@ -304,7 +305,7 @@
       border: none;
       font-size: 28px;
       cursor: pointer;
-      color: var(--hamuq-gray);
+      color: #2d3748;
       transition: color 0.3s;
     }
 
@@ -325,31 +326,44 @@
 
     /* Responsive */
     @media (max-width: 768px) {
+      #presentation-container {
+        width: 100vw;
+        min-height: 100vh;
+        box-shadow: none;
+      }
+
       .global-header {
-        left: 20px;
-        top: 20px;
-        gap: 10px;
+        left: 16px;
+        top: 16px;
+        gap: 8px;
       }
 
       .global-header img {
-        height: 35px;
+        height: 32px;
+      }
+
+      .slide-inner {
+        width: 100vw;
+        min-height: 100vh;
+        padding: 80px 16px 80px;
+        justify-content: flex-start;
       }
 
       .controls {
-        bottom: 20px;
-        right: 20px;
-        gap: 10px;
+        bottom: 12px;
+        right: 12px;
+        gap: 8px;
       }
 
       .btn-nav {
-        width: 40px;
-        height: 40px;
-        font-size: 16px;
+        width: 38px;
+        height: 38px;
+        font-size: 15px;
       }
 
       .slide-counter {
-        font-size: 13px;
-        padding: 8px 14px;
+        font-size: 12px;
+        padding: 6px 12px;
       }
 
       .cards-grid {
@@ -357,8 +371,8 @@
       }
 
       .modal-box {
-        padding: 25px;
-        max-width: 90%;
+        padding: 22px;
+        max-width: 94%;
       }
     }
 
@@ -374,6 +388,16 @@
     .color-danger { color: var(--danger); }
     .color-warning { color: var(--warning); }
     .color-success { color: var(--success); }
+
+    .card.clickable::after {
+      content: 'Haz clic para ver detalles';
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      font-size: 0.75rem;
+      color: #2d3748;
+      opacity: 0.85;
+    }
 
   </style>
 </head>
@@ -413,11 +437,11 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 30px 0;">
               <div style="background: var(--hamuq-orange-light); padding: 30px; border-radius: 12px;">
                 <h3 style="color: var(--danger); font-size: 2.5rem; margin: 0;">78%</h3>
-                <p style="color: var(--hamuq-gray); margin-top: 10px;">De donantes desconfía del destino real de sus aportes</p>
+                <p style="color: #2d3748; margin-top: 10px;">De donantes desconfía del destino real de sus aportes</p>
               </div>
               <div style="background: var(--hamuq-teal-light); padding: 30px; border-radius: 12px;">
                 <h3 style="color: var(--hamuq-teal); font-size: 2.5rem; margin: 0;">64%</h3>
-                <p style="color: var(--hamuq-gray); margin-top: 10px;">De ONGs pierden donantes por falta de transparencia</p>
+                <p style="color: #2d3748; margin-top: 10px;">De ONGs pierden donantes por falta de transparencia</p>
               </div>
             </div>
             <p style="margin-top: 30px; font-size: 1rem;">Sin trazabilidad clara, incluso las fundaciones más honestas sufren dudas injustificadas.</p>
@@ -528,17 +552,17 @@
         <div class="slide-inner">
           <h2>Los 3 Pilares del Zero-Trust</h2>
           <div class="cards-grid" style="margin-top: 40px;">
-            <div class="card" onclick="openModal('pilar-trazabilidad')">
+            <div class="card clickable" onclick="openModal('pilar-trazabilidad')">
               <div class="card-icon"><i class="fas fa-link"></i></div>
               <div class="card-title">Trazabilidad</div>
               <div class="card-text">Cada centavo tiene un código único que lo sigue de origen a destino</div>
             </div>
-            <div class="card" onclick="openModal('pilar-control')">
+            <div class="card clickable" onclick="openModal('pilar-control')">
               <div class="card-icon"><i class="fas fa-traffic-light"></i></div>
               <div class="card-title">Control</div>
               <div class="card-text">Flujo de 3 pasos (Rojo/Amarillo/Verde) para cada gasto</div>
             </div>
-            <div class="card" onclick="openModal('pilar-inmutabilidad')">
+            <div class="card clickable" onclick="openModal('pilar-inmutabilidad')">
               <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
               <div class="card-title">Inmutabilidad</div>
               <div class="card-text">Registro en blockchain que no puede ser alterado</div>
@@ -669,28 +693,24 @@
         </div>
       </div>
 
-      <!-- SLIDE 14: Casos de Éxito -->
+      <!-- SLIDE 14: Oportunidad para Hamuq -->
       <div class="slide">
         <div class="slide-inner">
-          <h2>Casos de Éxito en América Latina</h2>
-          <div style="margin-top: 40px; max-width: 900px;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
-              <div style="background: var(--hamuq-teal-light); padding: 25px; border-radius: 12px; border-left: 5px solid var(--hamuq-teal);">
-                <h3 style="margin: 0 0 10px 0; color: var(--hamuq-teal);">Colombia</h3>
-                <p style="font-size: 0.95rem; margin: 0;">Fundación Éxito implementó blockchain para donaciones. Resultado: 340% aumento en transparencia percibida.</p>
-              </div>
-              <div style="background: var(--hamuq-orange-light); padding: 25px; border-radius: 12px; border-left: 5px solid var(--hamuq-orange);">
-                <h3 style="margin: 0 0 10px 0; color: var(--hamuq-orange);">México</h3>
-                <p style="font-size: 0.95rem; margin: 0;">Red de ONGs adoptó trazabilidad digital. Resultado: 220% más donaciones en 6 meses.</p>
-              </div>
-              <div style="background: var(--success); color: white; padding: 25px; border-radius: 12px; border-left: 5px solid var(--hamuq-teal);">
-                <h3 style="margin: 0 0 10px 0; color: white;">Argentina</h3>
-                <p style="font-size: 0.95rem; margin: 0;">ONG de educación redujo fraude en 98% tras adoptar auditoría digital.</p>
-              </div>
-              <div style="background: var(--warning); color: white; padding: 25px; border-radius: 12px; border-left: 5px solid var(--hamuq-teal);">
-                <h3 style="margin: 0 0 10px 0; color: white;">Perú</h3>
-                <p style="font-size: 0.95rem; margin: 0;">Primeras ONGs con blockchain obtienen fondos de la UE sin auditoría externa.</p>
-              </div>
+          <h2>La Oportunidad para Fundación Hamuq</h2>
+          <div style="margin-top: 40px; max-width: 850px;">
+            <div style="background: var(--hamuq-teal-light); padding: 25px; border-radius: 12px; border-left: 5px solid var(--hamuq-teal); text-align: left;">
+              <h3 style="margin: 0 0 10px 0; color: var(--hamuq-teal);"><i class="fas fa-seedling"></i> Confianza como Activo Estratégico</h3>
+              <p style="font-size: 0.95rem; margin: 0;">
+                Un sistema de trazabilidad y control como Zero-Trust permite que cada donación quede documentada
+                de principio a fin, fortaleciendo la confianza de donantes actuales y futuros.
+              </p>
+            </div>
+            <div style="margin-top: 20px; background: var(--hamuq-orange-light); padding: 25px; border-radius: 12px; border-left: 5px solid var(--hamuq-orange); text-align: left;">
+              <h3 style="margin: 0 0 10px 0; color: var(--hamuq-orange);"><i class="fas fa-hands-helping"></i> Alineado al Contrato y a la Misión</h3>
+              <p style="font-size: 0.95rem; margin: 0;">
+                El Módulo Básico se centra en controlar cómo se registran, aprueban y rinden los fondos que Hamuq
+                decide entregar en sus proyectos, respetando siempre los alcances definidos en el contrato.
+              </p>
             </div>
           </div>
         </div>
@@ -717,37 +737,37 @@
         <div class="slide-inner">
           <h2>Los 7 Módulos del Módulo Básico</h2>
           <div class="cards-grid" style="margin-top: 30px;">
-            <div class="card" onclick="openModal('modulo-1')">
+            <div class="card clickable" onclick="openModal('modulo-1')">
               <div class="card-icon"><i class="fas fa-link"></i></div>
               <div class="card-title">1. Trazabilidad</div>
               <div class="card-text">Código único por donación</div>
             </div>
-            <div class="card" onclick="openModal('modulo-2')">
+            <div class="card clickable" onclick="openModal('modulo-2')">
               <div class="card-icon"><i class="fas fa-traffic-light"></i></div>
               <div class="card-title">2. Semáforo</div>
               <div class="card-text">Flujo de 3 pasos de aprobación</div>
             </div>
-            <div class="card" onclick="openModal('modulo-3')">
+            <div class="card clickable" onclick="openModal('modulo-3')">
               <div class="card-icon"><i class="fas fa-mobile-alt"></i></div>
               <div class="card-title">3. WebApp</div>
               <div class="card-text">Rendición de fondos en campo</div>
             </div>
-            <div class="card" onclick="openModal('modulo-4')">
+            <div class="card clickable" onclick="openModal('modulo-4')">
               <div class="card-icon"><i class="fas fa-cube"></i></div>
               <div class="card-title">4. Notario</div>
               <div class="card-text">Sellos blockchain inmutables</div>
             </div>
-            <div class="card" onclick="openModal('modulo-5')">
+            <div class="card clickable" onclick="openModal('modulo-5')">
               <div class="card-icon"><i class="fas fa-users"></i></div>
               <div class="card-title">5. Roles</div>
               <div class="card-text">5 perfiles de usuario</div>
             </div>
-            <div class="card" onclick="openModal('modulo-6')">
+            <div class="card clickable" onclick="openModal('modulo-6')">
               <div class="card-icon"><i class="fas fa-coins"></i></div>
               <div class="card-title">6. Ingresos</div>
               <div class="card-text">Captación omnicanal</div>
             </div>
-            <div class="card" onclick="openModal('modulo-7')">
+            <div class="card clickable" onclick="openModal('modulo-7')">
               <div class="card-icon"><i class="fas fa-chart-bar"></i></div>
               <div class="card-title">7. Dashboard</div>
               <div class="card-text">Control y reportes en tiempo real</div>
@@ -756,48 +776,42 @@
         </div>
       </div>
 
-      <!-- SLIDE 17: Arquitectura Global -->
+      <!-- SLIDE 17: Mapa Funcional de los Módulos -->
       <div class="slide">
         <div class="slide-inner">
-          <h2>Arquitectura Global del Sistema</h2>
-          <svg class="diagram" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
-            <!-- Base -->
-            <rect x="50" y="30" width="700" height="320" fill="none" stroke="#128c82" stroke-width="2" rx="10"/>
-            
-            <!-- Top Layer -->
-            <rect x="80" y="50" width="150" height="60" fill="#e0f2f1" stroke="#128c82" stroke-width="2" rx="5"/>
-            <text x="155" y="85" text-anchor="middle" font-family="Montserrat" font-size="12" font-weight="700" fill="#128c82">Frontend</text>
-            <text x="155" y="100" text-anchor="middle" font-family="Open Sans" font-size="10" fill="#4b4b4b">React + TS</text>
-
-            <rect x="280" y="50" width="150" height="60" fill="#e0f2f1" stroke="#128c82" stroke-width="2" rx="5"/>
-            <text x="355" y="85" text-anchor="middle" font-family="Montserrat" font-size="12" font-weight="700" fill="#128c82">Backend</text>
-            <text x="355" y="100" text-anchor="middle" font-family="Open Sans" font-size="10" fill="#4b4b4b">NestJS</text>
-
-            <rect x="480" y="50" width="150" height="60" fill="#e0f2f1" stroke="#128c82" stroke-width="2" rx="5"/>
-            <text x="555" y="85" text-anchor="middle" font-family="Montserrat" font-size="12" font-weight="700" fill="#128c82">Blockchain</text>
-            <text x="555" y="100" text-anchor="middle" font-family="Open Sans" font-size="10" fill="#4b4b4b">Polygon</text>
-
-            <!-- Arrows -->
-            <line x1="230" y1="80" x2="280" y2="80" stroke="#128c82" stroke-width="2" marker-end="url(#arrowhead)"/>
-            <line x1="430" y1="80" x2="480" y2="80" stroke="#128c82" stroke-width="2" marker-end="url(#arrowhead)"/>
-
-            <!-- Middle Layer -->
-            <rect x="100" y="170" width="600" height="50" fill="#feecd9" stroke="#f58220" stroke-width="2" rx="5"/>
-            <text x="400" y="200" text-anchor="middle" font-family="Montserrat" font-size="13" font-weight="700" fill="#f58220">Database: PostgreSQL + Docker</text>
-
-            <!-- Bottom Layer -->
-            <rect x="80" y="270" width="280" height="50" fill="#e0f2f1" stroke="#128c82" stroke-width="2" rx="5"/>
-            <text x="220" y="300" text-anchor="middle" font-family="Montserrat" font-size="11" font-weight="700" fill="#128c82">Seguridad: JWT + bcrypt</text>
-
-            <rect x="440" y="270" width="280" height="50" fill="#e0f2f1" stroke="#128c82" stroke-width="2" rx="5"/>
-            <text x="580" y="300" text-anchor="middle" font-family="Montserrat" font-size="11" font-weight="700" fill="#128c82">APIs: Integraciones externas</text>
-
-            <defs>
-              <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
-                <polygon points="0 0, 10 5, 0 10" fill="#128c82"/>
-              </marker>
-            </defs>
-          </svg>
+          <h2>Cómo se Conectan los Módulos en el Día a Día</h2>
+          <div style="margin-top: 40px; max-width: 900px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; text-align: left;">
+              <div style="background: var(--hamuq-teal-light); padding: 25px; border-radius: 12px;">
+                <h3 style="color: var(--hamuq-teal); margin-top: 0;"><i class="fas fa-donate"></i> Ingresos y Registro</h3>
+                <p style="font-size: 0.95rem; margin: 0;">
+                  Cada donación se registra con un código único en el Módulo de Trazabilidad y se relaciona con
+                  proyectos, partidas y responsables dentro del sistema.
+                </p>
+              </div>
+              <div style="background: var(--hamuq-orange-light); padding: 25px; border-radius: 12px;">
+                <h3 style="color: var(--hamuq-orange); margin-top: 0;"><i class="fas fa-traffic-light"></i> Aprobación de Gastos</h3>
+                <p style="font-size: 0.95rem; margin: 0;">
+                  Cuando se quiere usar un fondo, el Módulo de Semáforo guía la solicitud por las tres etapas de
+                  revisión: solicitud, revisión financiera y aprobación directiva.
+                </p>
+              </div>
+              <div style="background: var(--hamuq-gray-light); padding: 25px; border-radius: 12px;">
+                <h3 style="color: var(--hamuq-teal-dark); margin-top: 0;"><i class="fas fa-mobile-alt"></i> Ejecución y Rendición</h3>
+                <p style="font-size: 0.95rem; margin: 0;">
+                  El ejecutor usa la WebApp para rendir con fotos de comprobantes y evidencias. Esas rendiciones
+                  quedan asociadas al mismo código de donación y a la solicitud aprobada.
+                </p>
+              </div>
+              <div style="background: var(--hamuq-teal-light); padding: 25px; border-radius: 12px;">
+                <h3 style="color: var(--hamuq-teal); margin-top: 0;"><i class="fas fa-shield-alt"></i> Sellos y Dashboard</h3>
+                <p style="font-size: 0.95rem; margin: 0;">
+                  Los movimientos clave pueden sellarse en blockchain desde el Notario Digital y el Dashboard central
+                  permite monitorear saldos, alertas y estados de rendición en el sistema.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -924,27 +938,27 @@
         <div class="slide-inner">
           <h2>Los 5 Roles del Sistema</h2>
           <div class="cards-grid" style="margin-top: 30px;">
-            <div class="card" onclick="openModal('rol-admin')">
+            <div class="card clickable" onclick="openModal('rol-admin')">
               <div class="card-icon"><i class="fas fa-crown"></i></div>
               <div class="card-title">SuperAdmin</div>
               <div class="card-text">BlairCode: Configuración global</div>
             </div>
-            <div class="card" onclick="openModal('rol-directiva')">
+            <div class="card clickable" onclick="openModal('rol-directiva')">
               <div class="card-icon"><i class="fas fa-gavel"></i></div>
               <div class="card-title">Directiva</div>
               <div class="card-text">Aprobación de gastos grandes</div>
             </div>
-            <div class="card" onclick="openModal('rol-finanzas')">
+            <div class="card clickable" onclick="openModal('rol-finanzas')">
               <div class="card-icon"><i class="fas fa-calculator"></i></div>
               <div class="card-title">Finanzas</div>
               <div class="card-text">Revisión y validación de fondos</div>
             </div>
-            <div class="card" onclick="openModal('rol-ejecutor')">
+            <div class="card clickable" onclick="openModal('rol-ejecutor')">
               <div class="card-icon"><i class="fas fa-user-tie"></i></div>
               <div class="card-title">Ejecutor</div>
               <div class="card-text">Solicitudes y rendición de campo</div>
             </div>
-            <div class="card" onclick="openModal('rol-donante')">
+            <div class="card clickable" onclick="openModal('rol-donante')">
               <div class="card-icon"><i class="fas fa-user-friends"></i></div>
               <div class="card-title">Donante</div>
               <div class="card-text">Visualiza solo sus propias donaciones</div>
@@ -998,19 +1012,19 @@
           <div style="margin-top: 40px; background: var(--hamuq-gray-light); padding: 30px; border-radius: 12px; border: 2px solid var(--hamuq-teal);">
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 25px;">
               <div style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
-                <p style="margin: 0; font-size: 0.9rem; color: var(--hamuq-gray); font-weight: 700;">DISPONIBLE</p>
+                <p style="margin: 0; font-size: 0.9rem; color: #2d3748; font-weight: 700;">DISPONIBLE</p>
                 <p style="margin: 8px 0 0 0; font-size: 2rem; color: var(--success); font-weight: 700;">S/ 45,000</p>
               </div>
               <div style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
-                <p style="margin: 0; font-size: 0.9rem; color: var(--hamuq-gray); font-weight: 700;">COMPROMETIDO</p>
+                <p style="margin: 0; font-size: 0.9rem; color: #2d3748; font-weight: 700;">COMPROMETIDO</p>
                 <p style="margin: 8px 0 0 0; font-size: 2rem; color: var(--warning); font-weight: 700;">S/ 12,000</p>
               </div>
               <div style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
-                <p style="margin: 0; font-size: 0.9rem; color: var(--hamuq-gray); font-weight: 700;">EJECUTADO</p>
+                <p style="margin: 0; font-size: 0.9rem; color: #2d3748; font-weight: 700;">EJECUTADO</p>
                 <p style="margin: 8px 0 0 0; font-size: 2rem; color: var(--hamuq-teal); font-weight: 700;">S/ 33,000</p>
               </div>
             </div>
-            <p style="margin: 0; text-align: center; color: var(--hamuq-gray); font-size: 0.95rem;">
+            <p style="margin: 0; text-align: center; color: #2d3748; font-size: 0.95rem;">
               Saldos actualizados en tiempo real. Basados en lo que está registrado en el sistema (responsabilidad del encargado).
             </p>
           </div>
@@ -1056,8 +1070,658 @@
         </div>
       </div>
 
-      <!-- SLIDE 26-85: CONTINUAREMOS CON LOS MÓDULOS EN DETALLE -->
-      <!-- Por brevedad, incluiré los slides clave. El HTML completo tendría todos los 85 -->
+      <!-- SLIDE 26: Introducción Módulo 1 - Trazabilidad -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Módulo 1: Trazabilidad – "Pintado" de Fondos</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            Este módulo se encarga de que cada donación tenga una identidad clara dentro del sistema: un código único
+            que la vincula con proyectos, partidas, responsables y comprobantes.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 27: ¿Qué es un Código Único? -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>¿Qué es un Código Único de Donación?</h2>
+          <p style="margin-top: 30px; max-width: 750px;">
+            Cada aporte recibe un identificador como <strong>HAM-2026-03-001</strong>, que incluye fundación, año, mes
+            y número correlativo. Ese código seguirá a la donación en todo el sistema.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 28: Información Capturada (1) -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Información Capturada por Cada Donación (1)</h2>
+          <div class="cards-grid" style="margin-top: 30px;">
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-user"></i></div>
+              <div class="card-title">Origen del Aporte</div>
+              <div class="card-text">Nombre o razón social del donante, tipo de donante y país de procedencia.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-money-bill-wave"></i></div>
+              <div class="card-title">Monto y Moneda</div>
+              <div class="card-text">Cantidad aportada, moneda original y, si aplica, tipo de cambio registrado.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-calendar-alt"></i></div>
+              <div class="card-title">Fecha y Medio</div>
+              <div class="card-text">Fecha en que se recibe la donación y medio utilizado (transferencia, Yape, Plin, etc.).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 29: Información Capturada (2) -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Información Capturada por Cada Donación (2)</h2>
+          <div class="cards-grid" style="margin-top: 30px;">
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-project-diagram"></i></div>
+              <div class="card-title">Proyecto Asociado</div>
+              <div class="card-text">Proyecto, programa o línea de acción a la que se asigna el dinero dentro del contrato.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-list-ol"></i></div>
+              <div class="card-title">Partida Presupuestal</div>
+              <div class="card-text">Partida interna que permitirá después filtrar y analizar cómo se usaron los fondos.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-file-invoice"></i></div>
+              <div class="card-title">Comprobante / Referencia</div>
+              <div class="card-text">Número de comprobante, referencia bancaria u otro identificador que respalde el ingreso.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 30: Rastreo de Dinero -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Rastreo del Dinero: De Origen a Uso Final</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            Gracias al código único y a las partidas, Zero-Trust permite seguir cada fondo desde que entra al sistema
+            hasta que se ejecuta en un proyecto o actividad específica.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 31: Partidas y Proyectos -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Partidas Presupuestales y Proyectos</h2>
+          <div class="cards-grid" style="margin-top: 30px;">
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-layer-group"></i></div>
+              <div class="card-title">Partidas Detalladas</div>
+              <div class="card-text">El sistema registra en qué partidas se "pintan" los fondos dentro del plan anual.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-school"></i></div>
+              <div class="card-title">Proyectos y Obras</div>
+              <div class="card-text">Cada partida se vincula a proyectos concretos: obras, servicios, materiales y más.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 32: Comprobantes Vinculados -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Comprobantes Vinculados a Cada Donación</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            Los comprobantes que respaldan las donaciones (boletas, vouchers, constancias) se asocian al código
+            de donación y quedan listos para ser contrastados durante la validación manual.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 33: Portal del Donante -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Portal del Donante</h2>
+          <p style="margin-top: 30px; max-width: 780px;">
+            El sistema contempla una vista específica para donantes, donde solo pueden acceder al historial de sus
+            propios aportes y al resumen de cómo fueron utilizados dentro del sistema.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 34: Qué Ve el Donante -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Qué Ve el Donante en su Portal</h2>
+          <div class="cards-grid" style="margin-top: 30px;">
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-list"></i></div>
+              <div class="card-title">Listado de Donaciones</div>
+              <div class="card-text">Fecha, monto, proyecto asociado y estado de ejecución dentro del sistema.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-image"></i></div>
+              <div class="card-title">Evidencias de Uso</div>
+              <div class="card-text">Resumen de las evidencias cargadas en las rendiciones relacionadas a sus aportes.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 35: Historial Completo -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Historial Completo de Cada Donación</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            El sistema registra el ciclo completo: ingreso, asignación a partidas y proyectos, aprobaciones de gasto,
+            rendiciones y sellos digitales asociados.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 36: Hash Blockchain -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Sello Digital en Blockchain para Registros Clave</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            Para ciertos movimientos definidos en el contrato, el sistema puede generar un hash único en la red
+            Polygon que sirve como constancia criptográfica de que el dato existía en un momento específico.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 37: Verificabilidad Pública -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Verificabilidad Pública sin Exponer Datos Sensibles</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            Ciertos sellos se pueden consultar públicamente en la blockchain para demostrar que la información fue
+            registrada, sin revelar la identidad de donantes ni beneficiarios.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 38: Caso de Uso Completo -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Ejemplo Completo de Trazabilidad</h2>
+          <p style="margin-top: 30px; max-width: 820px;">
+            Una donación etiquetada a un proyecto concreto se sigue desde su registro con código único hasta su
+            rendición, pasando por la aprobación de gasto y las evidencias cargadas en la WebApp.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 39: Introducción Módulo 2 - Semáforo -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Módulo 2: Semáforo de Aprobaciones</h2>
+          <p style="margin-top: 30px; max-width: 780px;">
+            Este módulo define el flujo de revisión de cada gasto en tres pasos visuales: solicitud, revisión
+            financiera y aprobación directiva.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 40: Los 3 Pasos del Semáforo -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Los 3 Pasos del Semáforo</h2>
+          <div class="cards-grid" style="margin-top: 30px;">
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-circle" style="color: var(--danger);"></i></div>
+              <div class="card-title">Rojo: Solicitud</div>
+              <div class="card-text">El ejecutor registra qué quiere gastar, cuánto y para qué partida/proyecto.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-circle" style="color: var(--warning);"></i></div>
+              <div class="card-title">Amarillo: Revisión</div>
+              <div class="card-text">Finanzas verifica saldos, coherencia con el plan y documentación.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-circle" style="color: var(--success);"></i></div>
+              <div class="card-title">Verde: Aprobación</div>
+              <div class="card-text">La directiva autoriza o rechaza y queda registro de la decisión.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 41: Solicitud de Gasto -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Paso 1 – Solicitud de Gasto</h2>
+          <p style="margin-top: 30px; max-width: 780px;">
+            El ejecutor crea una solicitud indicando descripción del gasto, monto estimado, tipo de gasto y proyecto
+            relacionado, junto con la partida presupuestal a la que se cargará.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 42: Campos de la Solicitud -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Campos Clave en la Solicitud</h2>
+          <div class="cards-grid" style="margin-top: 30px;">
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-align-left"></i></div>
+              <div class="card-title">Descripción</div>
+              <div class="card-text">Qué se quiere adquirir o contratar, con el mayor detalle útil posible.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-coins"></i></div>
+              <div class="card-title">Monto Estimado</div>
+              <div class="card-text">Importe aproximado que se espera gastar, según el contrato o la cotización.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-receipt"></i></div>
+              <div class="card-title">Cotización / Referencia</div>
+              <div class="card-text">Documento o referencia que sustenta el cálculo del monto solicitado.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 43: Dinero Bloqueado en el Sistema -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Dinero "Bloqueado" Dentro del Sistema</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            Cuando se aprueba una solicitud, el sistema marca esos fondos como comprometidos en la partida
+            correspondiente, ayudando a evitar sobreasignar recursos dentro del plan definido.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 44: Modalidad A - Compras Regulares -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Modalidad A: Compras Regulares</h2>
+          <p style="margin-top: 30px; max-width: 780px;">
+            Pensada para gastos más simples y frecuentes: materiales, suministros básicos y servicios menores
+            considerados en el contrato.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 45: Modalidad B - Obras y Servicios Especiales -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Modalidad B: Obras y Servicios Especiales</h2>
+          <p style="margin-top: 30px; max-width: 780px;">
+            Para obras, servicios profesionales y otros compromisos que requieren un nivel mayor de detalle y
+            seguimiento en las solicitudes y rendiciones.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 46: Revisión Financiera -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Paso 2 – Revisión Financiera</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            El área de finanzas revisa que el gasto solicitado encaje con los saldos disponibles, el calendario
+            valorizado y las reglas definidas en el contrato.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 47: Validación de Saldos -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Validación de Saldos en el Sistema</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            El sistema ayuda a mostrar cuánto hay disponible por proyecto y partida para que finanzas tome una
+            decisión informada al revisar cada solicitud.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 48: Congruencia con el Plan -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Congruencia con el Calendario y el Plan</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            Cada solicitud se analiza respecto al calendario valorizado y a las metas del proyecto, ayudando a
+            mantener orden y disciplina en la ejecución.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 49: Tipos de Gasto y Vistas -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Vistas por Tipo de Gasto en el Sistema</h2>
+          <div class="cards-grid" style="margin-top: 30px;">
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-tools"></i></div>
+              <div class="card-title">Obras y Servicios</div>
+              <div class="card-text">Construcciones, mejoras de infraestructura, servicios especializados.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-box-open"></i></div>
+              <div class="card-title">Materiales</div>
+              <div class="card-text">Insumos, equipos y otros bienes necesarios para las actividades.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-briefcase"></i></div>
+              <div class="card-title">Asesoría y Servicios Profesionales</div>
+              <div class="card-text">Consultorías, acompañamiento técnico y servicios de apoyo.</div>
+            </div>
+            <div class="card">
+              <div class="card-icon"><i class="fas fa-users"></i></div>
+              <div class="card-title">Mano de Obra y Voluntariado</div>
+              <div class="card-text">Registros asociados a trabajo humano, según lo contemple el contrato.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 50: Aprobación Directiva -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Paso 3 – Aprobación de la Directiva</h2>
+          <p style="margin-top: 30px; max-width: 780px;">
+            Una vez revisado el gasto, la directiva aprueba o rechaza la solicitud. Esa decisión queda registrada
+            con nombre, fecha y hora dentro del sistema.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 51: Registro de Firma Interna -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Registro de Aprobación Interna</h2>
+          <p style="margin-top: 30px; max-width: 780px;">
+            Zero-Trust no reemplaza firmas legales externas, pero sí registra quién autorizó un gasto dentro de la
+            plataforma, apoyando la trazabilidad interna.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 52: Responsabilidad Trazable -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Responsabilidad Trazable para Cada Gasto</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            Desde la persona que solicita hasta quien aprueba, cada paso deja un registro que facilita auditorías,
+            revisiones internas y protección de la directiva.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 53: Beneficios del Semáforo -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Beneficios del Módulo de Semáforo</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            Orden en la aprobación, claridad de responsabilidades y mejor control sobre el ritmo de ejecución de los
+            recursos asignados a cada proyecto.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 54: Protección para la Directiva -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Apoyo a la Protección de la Directiva</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            Al quedar documentadas las decisiones y el contexto de cada gasto, es más sencillo demostrar que las
+            autorizaciones siguieron un proceso claro y acordado.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 55: Resumen Visual del Flujo de Aprobación -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Resumen Visual del Flujo de Aprobación</h2>
+          <p style="margin-top: 30px; max-width: 820px;">
+            El semáforo de Zero-Trust organiza en tres etapas lo que muchas veces se maneja por correo o de palabra,
+            dejando evidencia estructurada de cada paso.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 56: Introducción WebApp de Rendición -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Módulo 3: WebApp de Rendición</h2>
+          <p style="margin-top: 30px; max-width: 780px;">
+            Herramienta pensada para que los ejecutores rindan gastos de forma simple desde el lugar donde realizan
+            las actividades, usando navegador o dispositivo móvil.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 57: Responsivo en Móviles -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Diseñada para Móviles y Escritorio</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            La interfaz se adapta a pantallas pequeñas y grandes, facilitando el uso tanto en campo como en oficina.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 58: Carga de Facturas -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Carga de Comprobantes y Facturas</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            El ejecutor puede subir imágenes de facturas, boletas u otros comprobantes, asociándolos a la solicitud
+            de gasto aprobada.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 59: Carga de Evidencias de Ejecución -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Evidencias de Ejecución</h2>
+          <p style="margin-top: 30px; max-width: 780px;">
+            Además de los comprobantes, se pueden adjuntar fotos u otros archivos que muestren la ejecución real del
+            gasto en campo, según se defina en el contrato.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 60: Sello de Fecha y Hora -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Sello Automático de Fecha y Hora</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            Cada rendición queda registrada con fecha y hora en el sistema, ayudando a verificar plazos y tiempos
+            de respuesta.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 61: Alertas de Plazo de Rendición -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Alertas por Plazos de Rendición</h2>
+          <p style="margin-top: 30px; max-width: 780px;">
+            El sistema puede señalar qué rendiciones están por vencer o llevan demasiado tiempo pendientes, para que
+            el equipo actúe a tiempo.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 62: Validación Automática vs Manual en Rendición -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Apoyo a la Validación de Rendiciones</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            Ciertas verificaciones se pueden automatizar a nivel de formato y consistencia básica, pero la revisión
+            de contenido sigue a cargo de las personas responsables de control.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 63: Historial de Rendiciones -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Historial de Rendiciones por Proyecto</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            Cada proyecto puede verse con su listado de rendiciones, estados (pendiente, observado, aprobado) y
+            vínculos a las evidencias que se cargaron.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 64: Introducción Notario Digital -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Módulo 4: Notario Digital</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            Componente encargado de generar sellos digitales para ciertos registros, usando tecnología blockchain
+            en la red Polygon, cuando corresponda según el alcance del contrato.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 65: Qué es un Sello en Blockchain -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Qué es un "Sello" en Blockchain</h2>
+          <p style="margin-top: 30px; max-width: 820px;">
+            Un sello representa un resumen criptográfico de un dato o conjunto de datos. Sirve como comprobante de
+            que esa información existía y no fue modificada después.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 66: Red Polygon -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Uso de la Red Polygon</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            Polygon es una red compatible con Ethereum que permite sellar información con costos bajos y buen
+            rendimiento, adecuada para los volúmenes previstos en el módulo básico.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 67: Hash Criptográfico -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Hash Criptográfico Único</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            Cada sello incluye un hash: una cadena de caracteres que cambia por completo aunque se modifique solo un
+            detalle del dato original, lo que ayuda a detectar alteraciones.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 68: Registros Verificables -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Registros que Pueden Verificarse Externamente</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            De acuerdo al contrato, ciertos sellos podrán consultarse en exploradores públicos de la red, como una
+            capa adicional de transparencia.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 69: Dificultar Alteraciones -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Por Qué el Sello Dificulta Alteraciones</h2>
+          <p style="margin-top: 30px; max-width: 820px;">
+            Si alguien intentara cambiar un dato sellado, el nuevo hash no coincidiría con el registrado en la red,
+            lo que haría evidente la modificación.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 70: Apoyo a Auditorías -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Apoyo a Auditorías y Requerimientos Externos</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            Los sellos digitales pueden utilizarse como respaldo adicional cuando se rinden cuentas ante cooperantes
+            o entidades que valoran el uso de tecnologías verificables.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 71: Control de Acceso y Roles -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Módulo 5: Control de Acceso y Roles</h2>
+          <p style="margin-top: 30px; max-width: 800px;">
+            Define qué puede ver y hacer cada tipo de usuario: directiva, finanzas, ejecutores, donantes y equipo
+            técnico.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 72: Los 5 Roles del Sistema -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Roles Principales Dentro del Sistema</h2>
+          <div class="cards-grid" style="margin-top: 30px;">
+            <div class="card clickable" onclick="openModal('rol-directiva')">
+              <div class="card-icon"><i class="fas fa-user-tie"></i></div>
+              <div class="card-title">Directiva</div>
+              <div class="card-text">Aprueba gastos relevantes y consulta reportes de alto nivel.</div>
+            </div>
+            <div class="card clickable" onclick="openModal('rol-finanzas')">
+              <div class="card-icon"><i class="fas fa-calculator"></i></div>
+              <div class="card-title">Finanzas</div>
+              <div class="card-text">Revisa solicitudes, valida saldos y coherencia con el plan.</div>
+            </div>
+            <div class="card clickable" onclick="openModal('rol-ejecutor')">
+              <div class="card-icon"><i class="fas fa-user-check"></i></div>
+              <div class="card-title">Ejecutor</div>
+              <div class="card-text">Solicita gastos y rinde con evidencias.</div>
+            </div>
+            <div class="card clickable" onclick="openModal('rol-donante')">
+              <div class="card-icon"><i class="fas fa-hand-holding-usd"></i></div>
+              <div class="card-title">Donante</div>
+              <div class="card-text">Accede a su propio historial de aportes en el portal correspondiente.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 73: Autenticación -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Autenticación y Gestión de Sesiones</h2>
+          <p style="margin-top: 30px; max-width: 780px;">
+            El sistema contempla mecanismos como JWT y manejo seguro de contraseñas para proteger el acceso a las
+            vistas internas, de acuerdo a las buenas prácticas técnicas que acompañan el contrato.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 74: Módulo 6 - Ingresos Omnicanal -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Módulo 6: Ingresos Omnicanal</h2>
+          <p style="margin-top: 30px; max-width: 780px;">
+            Centraliza el registro de aportes provenientes de distintos medios de pago que Hamuq utilice dentro del
+            alcance del Módulo Básico.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 75: Métodos de Pago en el Sistema -->
+      <div class="slide">
+        <div class="slide-inner">
+          <h2>Métodos de Pago Considerados</h2>
+          <p style="margin-top: 30px; max-width: 780px;">
+            El sistema puede registrar aportes recibidos por transferencia bancaria u otros medios definidos, siempre
+            que el responsable cargue el comprobante y valide manualmente su ingreso real.
+          </p>
+        </div>
+      </div>
 
       <!-- SLIDE 76: Sistema Manual (CRÍTICO) -->
       <div class="slide">
@@ -1081,64 +1745,52 @@
         </div>
       </div>
 
-      <!-- SLIDE 81: Qué NO Hace el Sistema -->
+      <!-- SLIDE 81: Alcance del Módulo Básico -->
       <div class="slide">
         <div class="slide-inner">
-          <h2 class="color-danger">¿Qué NO Hace el Sistema?</h2>
+          <h2>¿Qué Sí Aporta el Módulo Básico de Zero-Trust?</h2>
           <div style="margin-top: 40px; max-width: 900px;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
-              <div style="background: var(--hamuq-orange-light); padding: 25px; border-radius: 10px;">
-                <h3 style="color: var(--danger); margin-top: 0;"><i class="fas fa-times-circle"></i> NO Automático</h3>
-                <ul style="text-align: left; list-style: none; padding: 0; margin: 0;">
-                  <li style="padding: 8px 0;">❌ No accede a cuentas bancarias</li>
-                  <li style="padding: 8px 0;">❌ No bloquea dinero en banco</li>
-                  <li style="padding: 8px 0;">❌ No valida sin datos del usuario</li>
-                  <li style="padding: 8px 0;">❌ No genera reportes SUNAT</li>
-                </ul>
+            <div class="cards-grid">
+              <div class="card">
+                <div class="card-icon"><i class="fas fa-link"></i></div>
+                <div class="card-title">Trazabilidad Completa</div>
+                <div class="card-text">Cada fondo entregado queda vinculado a proyectos, partidas y comprobantes, con un código único que lo sigue en todo el sistema.</div>
               </div>
-              <div style="background: var(--hamuq-teal-light); padding: 25px; border-radius: 10px;">
-                <h3 style="color: var(--success); margin-top: 0;"><i class="fas fa-check-circle"></i> SÍ Proporciona</h3>
-                <ul style="text-align: left; list-style: none; padding: 0; margin: 0;">
-                  <li style="padding: 8px 0;">✅ Control dentro del sistema</li>
-                  <li style="padding: 8px 0;">✅ Alertas de inconsistencias</li>
-                  <li style="padding: 8px 0;">✅ Trazabilidad digital</li>
-                  <li style="padding: 8px 0;">✅ Reportes internos exportables</li>
-                </ul>
+              <div class="card">
+                <div class="card-icon"><i class="fas fa-traffic-light"></i></div>
+                <div class="card-title">Control de Aprobaciones</div>
+                <div class="card-text">El flujo Rojo–Amarillo–Verde registra quién solicita, quién revisa y quién aprueba cada gasto antes de ejecutarlo.</div>
               </div>
-            </div>
-            <div style="margin-top: 30px; background: var(--hamuq-gray-light); padding: 25px; border-radius: 10px;">
-              <p style="margin: 0; text-align: center; color: var(--hamuq-gray); font-weight: 700;">
-                Zero-Trust es una HERRAMIENTA de control, no una solución mágica que previene fraude por sí sola.
-              </p>
+              <div class="card">
+                <div class="card-icon"><i class="fas fa-mobile-alt"></i></div>
+                <div class="card-title">Rendición Ordenada</div>
+                <div class="card-text">La WebApp permite rendir con fotos y evidencias, generando un historial claro por proyecto, ejecutor y tipo de gasto.</div>
+              </div>
+              <div class="card">
+                <div class="card-icon"><i class="fas fa-bell"></i></div>
+                <div class="card-title">Alertas y Seguimiento</div>
+                <div class="card-text">El sistema ayuda a detectar atrasos e inconsistencias y a priorizar dónde mirar, facilitando la detección temprana de posibles fraudes.</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- SLIDE 82: Sistema como Herramienta -->
+      <!-- SLIDE 82: Control que Ayuda a Prevenir Fraudes -->
       <div class="slide">
         <div class="slide-inner">
-          <h2>El Sistema Como Herramienta, No Como Solución Mágica</h2>
-          <div style="margin-top: 40px; max-width: 800px; background: var(--hamuq-teal-light); padding: 35px; border-radius: 12px;">
-            <p style="font-size: 1.1rem; margin: 0; color: var(--hamuq-teal-dark); font-weight: 700;">
-              Un martillo no construye la casa. El martillo es la herramienta.
-            </p>
-            <p style="margin-top: 20px; font-size: 1rem;">
-              Zero-Trust es similar: proporciona la estructura, pero los DATOS deben venir del usuario.
-            </p>
-            <div style="margin-top: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 0.95rem;">
-              <div style="text-align: left;">
-                <p><strong>Sistema proporciona:</strong></p>
-                <p style="margin: 5px 0;">✓ Estructura ordenada</p>
-                <p style="margin: 5px 0;">✓ Registro inmutable</p>
-                <p style="margin: 5px 0;">✓ Alertas de inconsistencias</p>
-              </div>
-              <div style="text-align: left;">
-                <p><strong>CLIENTE (Hamuq) proporciona:</strong></p>
-                <p style="margin: 5px 0;">✓ Datos precisos</p>
-                <p style="margin: 5px 0;">✓ Verificación manual</p>
-                <p style="margin: 5px 0;">✓ Responsabilidad</p>
-              </div>
+          <h2>Cómo el Control de Zero-Trust Ayuda a Alertar Sobre Fraudes</h2>
+          <div style="margin-top: 40px; max-width: 850px;">
+            <div style="background: var(--hamuq-teal-light); padding: 30px; border-radius: 12px; text-align: left;">
+              <p style="margin: 0 0 15px 0; font-size: 1.05rem;">
+                El sistema no reemplaza la responsabilidad humana, pero sí hace mucho más difícil que un fraude pase desapercibido.
+              </p>
+              <ul style="margin: 10px 0 0 20px; padding: 0; font-size: 0.95rem;">
+                <li style="margin: 6px 0;">Cada movimiento deja rastro: quién, cuándo, para qué y con qué evidencia.</li>
+                <li style="margin: 6px 0;">Las rendiciones atrasadas o incompletas generan alertas y llamados de atención.</li>
+                <li style="margin: 6px 0;">Los sellos digitales ayudan a probar que la información no fue cambiada después.</li>
+                <li style="margin: 6px 0;">Los reportes internos facilitan que auditorías y directiva se enfoquen en los casos de riesgo.</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -1147,37 +1799,37 @@
       <!-- SLIDE 83: Beneficios Reales -->
       <div class="slide">
         <div class="slide-inner">
-          <h2>Beneficios Reales del Zero-Trust</h2>
+          <h2>Beneficios Reales para Fundación Hamuq</h2>
           <div class="cards-grid" style="margin-top: 30px;">
             <div class="card">
-              <div class="card-icon"><i class="fas fa-chart-line"></i></div>
-              <div class="card-title">+240% Transparencia</div>
-              <div class="card-text">Donantes ven dónde va su dinero en tiempo real</div>
+              <div class="card-icon"><i class="fas fa-eye"></i></div>
+              <div class="card-title">Más Transparencia</div>
+              <div class="card-text">Donantes y directiva pueden seguir cada fondo dentro del sistema con un historial claro y ordenado.</div>
             </div>
             <div class="card">
-              <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
-              <div class="card-title">-98% Riesgo Fraude</div>
-              <div class="card-text">Control digital imposible de falsificar</div>
+              <div class="card-icon"><i class="fas fa-user-shield"></i></div>
+              <div class="card-title">Menor Riesgo de Fraude</div>
+              <div class="card-text">El registro detallado de solicitudes, aprobaciones y rendiciones dificulta prácticas irregulares y facilita detectarlas.</div>
             </div>
             <div class="card">
-              <div class="card-icon"><i class="fas fa-clock"></i></div>
-              <div class="card-title">-95% Tiempo Auditoría</div>
-              <div class="card-text">Datos ya están organizados y verificables</div>
+              <div class="card-icon"><i class="fas fa-clipboard-check"></i></div>
+              <div class="card-title">Auditorías Más Simples</div>
+              <div class="card-text">La información ya está organizada por proyectos, partidas, fechas y responsables, reduciendo el trabajo manual de auditoría.</div>
             </div>
             <div class="card">
-              <div class="card-icon"><i class="fas fa-handshake"></i></div>
-              <div class="card-title">+320% Donaciones</div>
-              <div class="card-text">Referencia: fundaciones con blockchain reciben más</div>
+              <div class="card-icon"><i class="fas fa-hand-holding-heart"></i></div>
+              <div class="card-title">Mejor Relación con Donantes</div>
+              <div class="card-text">La trazabilidad mejora la confianza y facilita explicar, con evidencia, cómo se usan los recursos que confían en Hamuq.</div>
             </div>
             <div class="card">
-              <div class="card-icon"><i class="fas fa-globe"></i></div>
-              <div class="card-title">Cumplimiento Legal</div>
-              <div class="card-text">Satisface SUNAT, APCI, organismos internacionales</div>
+              <div class="card-icon"><i class="fas fa-gavel"></i></div>
+              <div class="card-title">Soporte al Cumplimiento</div>
+              <div class="card-text">El sistema ayuda a documentar lo que piden reguladores y cooperantes, apoyando la gestión legal y administrativa.</div>
             </div>
             <div class="card">
-              <div class="card-icon"><i class="fas fa-rocket"></i></div>
-              <div class="card-title">Competitiva</div>
-              <div class="card-text">Hamuq será pionera en Perú en transparencia</div>
+              <div class="card-icon"><i class="fas fa-chart-bar"></i></div>
+              <div class="card-title">Decisiones Basadas en Datos</div>
+              <div class="card-text">Los reportes internos permiten analizar cómo se ejecutan los fondos y priorizar mejor futuros proyectos.</div>
             </div>
           </div>
         </div>
@@ -1226,7 +1878,7 @@
               <i class="fas fa-check-circle"></i> Confianza Restaurada
             </p>
           </div>
-          <p style="margin-top: 40px; font-size: 1.1rem; color: var(--hamuq-gray);">
+          <p style="margin-top: 40px; font-size: 1.1rem; color: #2d3748;">
             Hamuq, ¿listo para transformar tu gestión de fondos?
           </p>
         </div>
