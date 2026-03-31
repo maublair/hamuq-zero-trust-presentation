@@ -3,2011 +3,1648 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zero-Trust System — Fundación Hamuq | Presentación Ejecutiva</title>
-  
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-  
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
-  
-  <!-- GSAP -->
+  <title>Zero-Trust System | Fundación Hamuq</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Observer.min.js"></script>
   <style>
     :root {
-      --hamuq-teal: #128c82;
-      --hamuq-teal-light: #e0f2f1;
-      --hamuq-teal-dark: #0d6961;
-      --hamuq-orange: #f58220;
-      --hamuq-orange-light: #feecd9;
-      --hamuq-gray: #4b4b4b;
-      --hamuq-gray-light: #e2e8f0;
-      --white: #ffffff;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --success: #10b981;
+      --teal-950: #082f2d;
+      --teal-900: #0f4d49;
+      --teal-700: #137f76;
+      --teal-500: #24a697;
+      --orange-800: #cb640f;
+      --orange-700: #f58220;
+      --orange-500: #ffac49;
+      --paper: #f5f7f8;
+      --white: #fff;
+      --ink-950: #102028;
+      --ink-800: #293846;
+      --ink-700: #4f6172;
+      --ink-500: #748595;
+      --line: rgba(16, 24, 32, 0.12);
+      --shadow: 0 22px 48px rgba(7, 45, 44, 0.14);
+      --danger: #dc3f51;
+      --warning: #f2a33c;
+      --success: #1ca07c;
     }
 
-    * {
-      box-sizing: border-box;
+    * { box-sizing: border-box; }
+    html, body {
       margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background-color: #1a1a1a;
-      font-family: 'Open Sans', sans-serif;
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-      overflow-y: auto;
-    }
-
-    #presentation-wrapper {
       width: 100%;
-      min-height: 100vh;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Source Sans 3", sans-serif;
+      color: var(--ink-950);
+      background:
+        radial-gradient(circle at 18% 18%, rgba(19,127,118,0.18), transparent 26%),
+        radial-gradient(circle at 82% 12%, rgba(245,130,32,0.16), transparent 20%),
+        linear-gradient(160deg, #eef4f4 0%, #faf7f1 50%, #eef2f6 100%);
     }
 
-    /* Progress Bar */
-    #progress-bar {
+    body { text-transform: none; }
+    button { font: inherit; }
+
+    .app-shell {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .app-shell::before,
+    .app-shell::after {
+      content: "";
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(26px);
+      opacity: 0.28;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app-shell::before {
+      width: 30vw;
+      height: 30vw;
+      top: -8vw;
+      right: -6vw;
+      background: radial-gradient(circle, rgba(19,127,118,0.48), transparent 62%);
+    }
+
+    .app-shell::after {
+      width: 28vw;
+      height: 28vw;
+      bottom: -10vw;
+      left: -8vw;
+      background: radial-gradient(circle, rgba(245,130,32,0.34), transparent 62%);
+    }
+
+    .topbar {
       position: fixed;
       top: 0;
       left: 0;
-      height: 4px;
-      background: linear-gradient(90deg, var(--hamuq-teal), var(--hamuq-orange));
-      width: 0%;
-      z-index: 1000;
-      transition: width 0.3s ease;
+      width: 100%;
+      z-index: 30;
+      padding: 16px 24px 0;
+      pointer-events: none;
     }
 
-    /* Presentation Container */
-    #presentation-container {
-      width: min(100vw, 1400px);
-      min-height: 100vh;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      background-color: #f7fafc;
-      box-shadow: 0 0 60px rgba(0,0,0,0.5);
-      overflow: hidden;
-    }
-
-    /* Global Header */
-    .global-header {
-      position: absolute;
-      top: 30px;
-      left: 40px;
-      z-index: 100;
+    .topbar-row {
       display: flex;
       align-items: center;
-      gap: 20px;
+      justify-content: space-between;
+      gap: 16px;
+      pointer-events: auto;
     }
 
-    .global-header img {
-      height: 45px;
-      object-fit: contain;
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid var(--line);
+      box-shadow: 0 16px 35px rgba(7, 45, 44, 0.08);
+      backdrop-filter: blur(16px);
     }
 
-    .header-text h2 {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 14px;
-      color: var(--hamuq-teal);
-      font-weight: 700;
-      margin: 0;
+    .brand-logos {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    /* Slides */
-    .slide {
-      position: absolute;
-      top: 0;
-      left: 0;
+    .brand img { height: 34px; width: auto; object-fit: contain; }
+
+    .brand img.logo-blaircode { height: 28px; }
+    .brand-copy { display: grid; gap: 2px; }
+    .brand-copy span {
+      font-family: "Montserrat", sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-500);
+    }
+
+    .brand-copy strong {
+      font-family: "Montserrat", sans-serif;
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--teal-950);
+    }
+
+    .topbar-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .meta-pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.8);
+      border: 1px solid var(--line);
+      box-shadow: 0 16px 35px rgba(7, 45, 44, 0.08);
+      color: var(--ink-700);
+      font-size: 0.88rem;
+      backdrop-filter: blur(16px);
+    }
+
+    .progress {
+      margin-top: 14px;
+      width: 100%;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(16, 24, 32, 0.08);
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal-700), var(--orange-700));
+      border-radius: inherit;
+      transition: width 0.25s ease;
+    }
+
+    .deck {
+      position: relative;
       width: 100%;
       height: 100%;
-      opacity: 0;
+      z-index: 1;
+    }
+
+    section.panel {
+      position: fixed;
+      inset: 0;
       visibility: hidden;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
+      padding: 94px 0 72px;
+    }
+
+    .outer, .inner {
+      width: 100%;
+      height: 100%;
       overflow: hidden;
     }
 
-    .slide.active {
-      opacity: 1;
-      visibility: visible;
+    .panel-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 16% 24%, rgba(19,127,118,0.16), transparent 24%),
+        radial-gradient(circle at 84% 15%, rgba(245,130,32,0.14), transparent 20%),
+        linear-gradient(160deg, rgba(255,255,255,0.95), rgba(244,247,249,0.94));
     }
 
-    .slide-inner {
-      width: min(1000px, 92vw);
-      min-height: 100vh;
-      padding: 90px 20px 90px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      margin: 0 auto;
+    .panel--teal .panel-bg {
+      background:
+        radial-gradient(circle at 16% 24%, rgba(19,127,118,0.22), transparent 24%),
+        radial-gradient(circle at 84% 15%, rgba(35,166,151,0.14), transparent 18%),
+        linear-gradient(160deg, rgba(238,250,248,0.96), rgba(246,248,249,0.95));
+    }
+
+    .panel--orange .panel-bg {
+      background:
+        radial-gradient(circle at 18% 20%, rgba(245,130,32,0.16), transparent 24%),
+        radial-gradient(circle at 82% 16%, rgba(19,127,118,0.12), transparent 18%),
+        linear-gradient(160deg, rgba(255,249,241,0.96), rgba(247,249,251,0.95));
+    }
+
+    .panel-body {
       position: relative;
+      z-index: 2;
+      width: min(1160px, calc(100vw - 40px));
+      height: 100%;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.04fr) minmax(320px, 0.96fr);
+      gap: clamp(22px, 2.6vw, 36px);
+      align-items: center;
     }
 
-    .slide h1 {
-      font-family: 'Montserrat', sans-serif;
-      font-size: clamp(2rem, 8vw, 4rem);
-      color: var(--hamuq-teal-dark);
-      margin-bottom: 20px;
+    .panel-body--single { grid-template-columns: minmax(0, 1fr); }
+
+    .copy-col {
+      max-width: 640px;
+      width: 100%;
+      display: grid;
+      gap: 16px;
+      align-content: center;
+      justify-self: center;
+    }
+
+    .copy-col.centered {
+      margin: 0 auto;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: fit-content;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid var(--line);
+      box-shadow: 0 12px 28px rgba(7, 45, 44, 0.08);
+      font-family: "Montserrat", sans-serif;
+      font-size: 0.74rem;
       font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--teal-900);
     }
 
-    .slide h2 {
-      font-family: 'Montserrat', sans-serif;
-      font-size: clamp(1.5rem, 6vw, 2.5rem);
-      color: #2d3748;
-      margin-bottom: 30px;
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--teal-700), var(--orange-700));
+      box-shadow: 0 0 0 6px rgba(19,127,118,0.08);
+    }
+
+    h1, h2, h3, h4 {
+      margin: 0;
+      font-family: "Montserrat", sans-serif;
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+      color: var(--teal-950);
+    }
+
+    h1 { font-size: clamp(2.6rem, 5vw, 5.2rem); max-width: 11ch; }
+    h2 { font-size: clamp(1.8rem, 3.4vw, 3.45rem); max-width: 15ch; }
+    .centered h1, .centered h2 { max-width: 14ch; }
+
+    .lede {
+      margin: 0;
+      max-width: 60ch;
+      font-size: clamp(0.98rem, 1.34vw, 1.12rem);
+      line-height: 1.58;
+      color: var(--ink-800);
+    }
+
+    .support-line {
+      margin: 0;
+      max-width: 64ch;
+      font-size: 0.9rem;
+      line-height: 1.48;
+      color: var(--ink-700);
+    }
+
+    .keyline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(19,127,118,0.1);
+      border: 1px solid rgba(19,127,118,0.18);
+      color: var(--teal-900);
+      font-size: 0.84rem;
       font-weight: 700;
     }
 
-    .slide h3 {
-      font-family: 'Montserrat', sans-serif;
-      font-size: clamp(1rem, 4vw, 1.5rem);
-      color: #2d3748;
-      margin: 15px 0;
-      font-weight: 600;
+    .tag--warm {
+      background: rgba(245,130,32,0.1);
+      border-color: rgba(245,130,32,0.18);
+      color: var(--orange-800);
     }
 
-    .slide p {
-      font-size: clamp(0.9rem, 3vw, 1.1rem);
-      color: #2d3748;
-      line-height: 1.6;
-      margin: 10px 0;
-      max-width: 900px;
+    .metrics-row, .cards-grid, .flow-row, .role-row, .comparison, .modal-grid {
+      width: 100%;
     }
 
-    /* Highlight Orange */
-    .highlight-orange {
-      color: var(--hamuq-orange) !important;
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      max-width: 760px;
     }
 
-    .highlight-teal {
-      color: var(--hamuq-teal) !important;
+    .metric, .card, .flow-node, .role-card, .comparison-box {
+      border-radius: 24px;
+      background: rgba(255,255,255,0.99);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
     }
 
-    /* Cards Grid */
+    .metric {
+      padding: 18px;
+      min-height: 118px;
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .metric strong {
+      font-family: "Montserrat", sans-serif;
+      font-size: clamp(1.28rem, 2.6vw, 2rem);
+      line-height: 1;
+      color: var(--teal-900);
+    }
+
+    .metric span, .card p, .flow-node span, .role-card span, .comparison-box li {
+      color: var(--ink-700);
+      line-height: 1.48;
+      font-size: 0.93rem;
+    }
+
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      width: 100%;
-      max-width: 950px;
-      margin-top: 30px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      max-width: 760px;
     }
+
+    .cards-grid.cards-grid--three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      max-width: 960px;
+    }
+
+    .cards-grid.cards-grid--wide { max-width: 960px; }
 
     .card {
-      background: var(--hamuq-gray-light);
-      border: 2px solid var(--hamuq-teal-light);
-      border-radius: 12px;
-      padding: 25px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 20px 40px rgba(18, 140, 130, 0.2);
-      border-color: var(--hamuq-teal);
+      padding: 20px;
+      min-height: 148px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
     }
 
     .card-icon {
-      font-size: 2.5rem;
-      color: var(--hamuq-orange);
-      margin-bottom: 15px;
-    }
-
-    .card-title {
-      font-family: 'Montserrat', sans-serif;
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, rgba(19,127,118,0.14), rgba(245,130,32,0.14));
+      color: var(--teal-950);
+      font-family: "Montserrat", sans-serif;
       font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--hamuq-teal);
-      margin-bottom: 10px;
+      font-weight: 800;
     }
 
-    .card-text {
-      font-size: 0.95rem;
-      color: #2d3748;
-      line-height: 1.5;
-    }
+    .card h3 { font-size: 1rem; line-height: 1.18; }
 
-    /* SVG Diagrams */
-    .diagram {
+    .card button, .hotspot {
       width: 100%;
-      max-width: 800px;
-      margin: 30px auto;
-    }
-
-    /* Navigation Controls */
-    .controls {
-      position: fixed;
-      bottom: 30px;
-      right: 40px;
-      z-index: 100;
-      display: flex;
-      gap: 15px;
-      align-items: center;
-    }
-
-    .btn-nav {
-      background-color: var(--hamuq-teal);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      font-size: 20px;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: inherit;
+      text-align: inherit;
       cursor: pointer;
-      transition: all 0.3s;
-      display: flex;
-      justify-content: center;
+    }
+
+    .cta, .visual-cta {
+      display: inline-flex;
       align-items: center;
-      box-shadow: 0 4px 15px rgba(18, 140, 130, 0.3);
+      gap: 8px;
+      font-family: "Montserrat", sans-serif;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
 
-    .btn-nav:hover {
-      background-color: var(--hamuq-orange);
-      transform: scale(1.1);
-      box-shadow: 0 6px 20px rgba(245, 130, 32, 0.4);
+    .cta {
+      margin-top: auto;
+      color: var(--teal-900);
     }
 
-    .slide-counter {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 600;
-      color: #2d3748;
-      font-size: 16px;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 10px 18px;
-      border-radius: 25px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    .cta::before, .visual-cta::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--orange-700);
+      animation: pulse 1.8s infinite;
     }
 
-    /* Modal */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(245,130,32,0.55); }
+      70% { box-shadow: 0 0 0 12px rgba(245,130,32,0); }
+      100% { box-shadow: 0 0 0 0 rgba(245,130,32,0); }
+    }
+
+    .visual-col {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(5px);
+      min-height: 340px;
+    }
+
+    .visual-shell {
+      position: relative;
+      width: min(100%, 490px);
+      min-height: 320px;
+      border-radius: 32px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.98);
+      box-shadow: 0 26px 50px rgba(7,45,44,0.16);
+      overflow: hidden;
+      padding: 22px;
+    }
+
+    .visual-shell.is-clickable { cursor: pointer; transition: transform 0.25s ease, box-shadow 0.25s ease; }
+    .visual-shell.is-clickable:hover { transform: translateY(-4px); box-shadow: 0 32px 60px rgba(7,45,44,0.18); }
+
+    .visual-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(19,127,118,0.08), transparent 40%),
+        radial-gradient(circle at 78% 18%, rgba(245,130,32,0.12), transparent 22%);
+      pointer-events: none;
+    }
+
+    .visual-shell svg { width: 100%; height: 100%; }
+
+    .visual-caption {
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: var(--ink-500);
+    }
+
+    .visual-cta {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(8,47,45,0.9);
+      color: var(--white);
+      box-shadow: 0 12px 24px rgba(7,45,44,0.2);
+    }
+
+    .flow-row, .role-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      max-width: 920px;
+    }
+
+    .flow-node, .role-card {
+      padding: 18px;
+      min-height: 150px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .flow-node strong, .role-card strong {
+      font-family: "Montserrat", sans-serif;
+      font-size: 0.96rem;
+      color: var(--teal-950);
+    }
+
+    .flow-node .step {
+      font-size: 0.78rem;
+      color: var(--orange-800);
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      max-width: 920px;
+    }
+
+    .comparison-box {
+      padding: 22px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .comparison-box h3 { font-size: 1rem; }
+    .comparison-box ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+    .comparison-box li::before { margin-right: 8px; font-weight: 800; }
+    .comparison-box.bad li::before { content: "×"; color: var(--danger); }
+    .comparison-box.good li::before { content: "✓"; color: var(--success); }
+
+    .modal-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 500;
+      padding: 24px;
+      background: rgba(7,18,24,0.58);
+      backdrop-filter: blur(18px);
     }
 
-    .modal-overlay.active {
-      display: flex;
-    }
+    .modal-layer.active { display: flex; }
 
-    .modal-box {
-      background: white;
-      border-radius: 20px;
-      padding: 40px;
-      max-width: 600px;
-      max-height: 80vh;
+    .modal-card {
+      width: min(920px, 100%);
+      max-height: min(88vh, 900px);
       overflow-y: auto;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      position: relative;
+      background: rgba(255,255,255,0.98);
+      border-radius: 32px;
+      border: 1px solid var(--line);
+      padding: 28px 28px 26px;
+      box-shadow: 0 28px 80px rgba(7,18,24,0.34);
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .modal-head h3 { font-size: clamp(1.4rem, 2vw, 1.95rem); }
+    .modal-head p {
+      margin: 6px 0 0;
+      color: var(--ink-700);
+      line-height: 1.58;
+      max-width: 62ch;
     }
 
     .modal-close {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: none;
-      border: none;
-      font-size: 28px;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 0;
+      background: var(--teal-950);
+      color: var(--white);
       cursor: pointer;
-      color: #2d3748;
-      transition: color 0.3s;
+      font-size: 1.2rem;
+      box-shadow: 0 16px 30px rgba(7,45,44,0.2);
     }
 
-    .modal-close:hover {
-      color: var(--hamuq-orange);
+    .modal-body { display: grid; gap: 18px; color: var(--ink-800); }
+    .modal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
     }
 
-    .modal-box h2 {
-      color: var(--hamuq-teal);
-      margin-bottom: 20px;
-      text-align: left;
+    .modal-box {
+      padding: 18px;
+      border-radius: 22px;
+      background: var(--paper);
+      border: 1px solid var(--line);
     }
 
-    .modal-box p {
-      text-align: left;
-      margin-bottom: 15px;
+    .modal-box h4 {
+      margin-bottom: 8px;
+      font-size: 1rem;
+      color: var(--teal-900);
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-      #presentation-container {
-        width: 100vw;
-        min-height: 100vh;
-        box-shadow: none;
-      }
-
-      .global-header {
-        left: 16px;
-        top: 16px;
-        gap: 8px;
-      }
-
-      .global-header img {
-        height: 32px;
-      }
-
-      .slide-inner {
-        width: 100vw;
-        min-height: 100vh;
-        padding: 80px 16px 80px;
-        justify-content: flex-start;
-      }
-
-      .controls {
-        bottom: 12px;
-        right: 12px;
-        gap: 8px;
-      }
-
-      .btn-nav {
-        width: 38px;
-        height: 38px;
-        font-size: 15px;
-      }
-
-      .slide-counter {
-        font-size: 12px;
-        padding: 6px 12px;
-      }
-
-      .cards-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .modal-box {
-        padding: 22px;
-        max-width: 94%;
-      }
+    .modal-box p, .modal-body ul {
+      margin: 0;
+      color: var(--ink-700);
+      line-height: 1.58;
     }
 
-    /* Utility Classes */
-    .text-center { text-align: center; }
-    .mt-20 { margin-top: 20px; }
-    .mt-30 { margin-top: 30px; }
-    .mb-20 { margin-bottom: 20px; }
-    .mb-30 { margin-bottom: 30px; }
+    .modal-body ul {
+      padding-left: 18px;
+      display: grid;
+      gap: 10px;
+    }
 
-    .color-teal { color: var(--hamuq-teal); }
-    .color-orange { color: var(--hamuq-orange); }
-    .color-danger { color: var(--danger); }
-    .color-warning { color: var(--warning); }
-    .color-success { color: var(--success); }
+    .nav-cluster {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 35;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.84);
+      border: 1px solid var(--line);
+      box-shadow: 0 16px 35px rgba(7,45,44,0.12);
+      backdrop-filter: blur(16px);
+    }
 
-    .card.clickable::after {
-      content: 'Haz clic para ver detalles';
+    .nav-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 0;
+      background: linear-gradient(160deg, var(--teal-700), var(--teal-900));
+      color: var(--white);
+      cursor: pointer;
+      font-size: 1.15rem;
+      box-shadow: 0 12px 24px rgba(19,127,118,0.24);
+    }
+
+    .nav-btn--ghost {
+      background: linear-gradient(160deg, var(--orange-700), var(--orange-800));
+      box-shadow: 0 12px 24px rgba(245,130,32,0.24);
+    }
+
+    .nav-btn--neutral {
+      width: auto;
+      padding: 0 14px;
+      border-radius: 999px;
+      background: linear-gradient(160deg, #1d2b36, #30404d);
+      box-shadow: 0 12px 24px rgba(16,24,32,0.18);
+      font-family: "Montserrat", sans-serif;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .nav-info {
+      min-width: 116px;
+      padding: 0 10px 0 4px;
+      display: grid;
+      gap: 2px;
+    }
+
+    .nav-info strong {
+      font-family: "Montserrat", sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-500);
+    }
+
+    .nav-info span {
+      font-family: "Montserrat", sans-serif;
+      font-weight: 700;
+      color: var(--teal-950);
+    }
+
+    .scroll-hint {
+      position: fixed;
+      left: 20px;
+      bottom: 90px;
+      z-index: 35;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid var(--line);
+      box-shadow: 0 16px 35px rgba(7,45,44,0.12);
+      color: var(--ink-700);
+      font-size: 0.78rem;
+      backdrop-filter: blur(16px);
+    }
+
+    .scroll-hint .wheel {
+      width: 20px;
+      height: 32px;
+      border-radius: 999px;
+      border: 2px solid rgba(16, 24, 32, 0.22);
+      position: relative;
+    }
+
+    .scroll-hint .wheel::after {
+      content: "";
       position: absolute;
-      bottom: 10px;
-      right: 15px;
-      font-size: 0.75rem;
-      color: #2d3748;
-      opacity: 0.85;
+      left: 50%;
+      top: 5px;
+      width: 4px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--teal-700);
+      transform: translateX(-50%);
+      animation: wheelMove 1.6s ease-in-out infinite;
     }
 
+    @keyframes wheelMove {
+      0%, 100% { transform: translate(-50%, 0); opacity: 1; }
+      50% { transform: translate(-50%, 10px); opacity: 0.25; }
+    }
+
+    .panel h1,
+    .panel h2,
+    .panel .lede,
+    .panel .support-line,
+    .panel .tag,
+    .panel .metric,
+    .panel .card,
+    .panel .visual-shell,
+    .panel .flow-node,
+    .panel .role-card,
+    .panel .comparison-box { will-change: transform, opacity; }
+
+    @media (max-width: 1100px) {
+      .panel-body { grid-template-columns: minmax(0, 1fr); }
+      .visual-col { min-height: 250px; }
+      .metrics-row,
+      .cards-grid.cards-grid--three,
+      .flow-row,
+      .role-row,
+      .comparison { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 760px) {
+      .topbar { padding: 12px 14px 0; }
+      .topbar-meta { display: none; }
+      .brand { gap: 10px; padding: 9px 12px; }
+      .brand img { height: 28px; }
+      .brand img.logo-blaircode { height: 24px; }
+      section.panel { padding: 78px 0 74px; }
+      .panel-body { width: min(100vw - 24px, 100%); gap: 18px; }
+      .copy-col { gap: 14px; }
+      .eyebrow { font-size: 0.68rem; }
+      h1 { font-size: clamp(2rem, 10vw, 3.2rem); }
+      h2 { font-size: clamp(1.58rem, 8vw, 2.55rem); }
+      .metrics-row,
+      .cards-grid,
+      .cards-grid.cards-grid--three,
+      .flow-row,
+      .role-row,
+      .comparison,
+      .modal-grid { grid-template-columns: 1fr; }
+      .metric, .card, .flow-node, .role-card { min-height: auto; }
+      .visual-shell { min-height: 260px; padding: 18px; }
+      .nav-cluster { right: 12px; bottom: 14px; }
+      .scroll-hint { display: none; }
+      .modal-layer { padding: 14px; }
+      .modal-card { padding: 20px; max-height: 90vh; }
+    }
+
+    @media (max-height: 760px) {
+      .scroll-hint { display: none; }
+    }
   </style>
 </head>
 <body>
-  <div id="presentation-wrapper">
-    <div id="progress-bar"></div>
-    
-    <div id="presentation-container">
-      <!-- Global Header -->
-      <div class="global-header">
-        <img src="https://drive.google.com/uc?export=view&id=1Zk3mueJ2WM9LUj2R0C7D7qka0tHhDQEE" alt="Hamuq Logo">
-        <div class="header-text">
-          <h2>ZERO-TRUST SYSTEM</h2>
-        </div>
-      </div>
-
-      <!-- SLIDES START HERE -->
-      
-      <!-- SLIDE 1: Portada -->
-      <div class="slide active">
-        <div class="slide-inner">
-          <img src="https://drive.google.com/uc?export=view&id=1Zk3mueJ2WM9LUj2R0C7D7qka0tHhDQEE" alt="Hamuq" style="height: 80px; margin-bottom: 40px;">
-          <h1>Zero-Trust System</h1>
-          <h2 class="highlight-orange">Gestión Transparente de Fondos para Fundación Hamuq</h2>
-          <p style="margin-top: 50px; font-size: 1.1rem;">Trazabilidad Total • Control Digital • Seguridad Blockchain</p>
-          <div style="margin-top: 60px; display: flex; gap: 30px; justify-content: center;">
-            <img src="https://drive.google.com/uc?export=view&id=1BVWl7CpBOecgb6SX1YlXDuO_V2gWJKPy" alt="BlairCode" style="height: 60px;">
+  <div class="app-shell">
+    <div class="topbar">
+      <div class="topbar-row">
+        <div class="brand">
+          <div class="brand-logos">
+            <img src="./assets/hamuq-logo.png" alt="Fundación Hamuq">
+            <img class="logo-blaircode" src="./assets/blaircode-logo.png" alt="BlairCode">
+          </div>
+          <div class="brand-copy">
+            <span>Plataforma de integridad</span>
+            <strong>Zero-Trust System</strong>
           </div>
         </div>
-      </div>
-
-      <!-- SLIDE 2: Crisis de Confianza -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>La Crisis de Confianza en Donaciones</h2>
-          <div style="margin-top: 40px; width: 100%; max-width: 700px;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 30px 0;">
-              <div style="background: var(--hamuq-orange-light); padding: 30px; border-radius: 12px;">
-                <h3 style="color: var(--danger); font-size: 2.5rem; margin: 0;">78%</h3>
-                <p style="color: #2d3748; margin-top: 10px;">De donantes desconfía del destino real de sus aportes</p>
-              </div>
-              <div style="background: var(--hamuq-teal-light); padding: 30px; border-radius: 12px;">
-                <h3 style="color: var(--hamuq-teal); font-size: 2.5rem; margin: 0;">64%</h3>
-                <p style="color: #2d3748; margin-top: 10px;">De ONGs pierden donantes por falta de transparencia</p>
-              </div>
-            </div>
-            <p style="margin-top: 30px; font-size: 1rem;">Sin trazabilidad clara, incluso las fundaciones más honestas sufren dudas injustificadas.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 3: Estadísticas Fraude -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>El Fraude en Organizaciones Sociales</h2>
-          <div style="margin-top: 40px; background: var(--hamuq-gray-light); padding: 40px; border-radius: 15px; max-width: 700px;">
-            <div style="margin: 20px 0; padding: 15px; border-left: 4px solid var(--danger);">
-              <h3 style="color: var(--danger); margin: 0 0 10px 0; font-size: 1.3rem;">$2.8 billones USD</h3>
-              <p>Pérdidas anuales por fraude en el sector sin ánimo de lucro</p>
-            </div>
-            <div style="margin: 20px 0; padding: 15px; border-left: 4px solid var(--warning);">
-              <h3 style="color: var(--warning); margin: 0 0 10px 0; font-size: 1.3rem;">43%</h3>
-              <p>De casos no se detectan sin sistemas de auditoría digital</p>
-            </div>
-            <div style="margin: 20px 0; padding: 15px; border-left: 4px solid var(--hamuq-orange);">
-              <h3 style="color: var(--hamuq-orange); margin: 0 0 10px 0; font-size: 1.3rem;">9 meses</h3>
-              <p>Tiempo promedio para detectar un fraude sin tecnología</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 4: El Reto de Toda Fundación -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>El Reto de Toda Fundación Moderna</h2>
-          <div class="cards-grid" style="margin-top: 40px;">
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-handshake"></i></div>
-              <div class="card-title">Ganar Confianza</div>
-              <div class="card-text">Demostrar que cada donación llega adonde promete</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-lock"></i></div>
-              <div class="card-title">Prevenir Fraude</div>
-              <div class="card-text">Detectar irregularidades en tiempo real</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-chart-line"></i></div>
-              <div class="card-title">Cumplir Regulaciones</div>
-              <div class="card-text">Satisfacer auditorías y organismos internacionales</div>
-            </div>
-          </div>
-          <p style="margin-top: 40px;">Hamuq necesita un sistema que lo haga TODO a la vez.</p>
-        </div>
-      </div>
-
-      <!-- SLIDE 5: ¿Por qué dudan los donantes? -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>¿Por Qué Dudan Los Donantes?</h2>
-          <div style="margin-top: 40px; max-width: 800px;">
-            <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
-              <div style="background: white; border: 2px solid var(--danger); border-radius: 10px; padding: 20px; cursor: pointer;" onclick="openModal('donante-duda-1')">
-                <h3 style="color: var(--danger); margin: 0 0 10px 0;"><i class="fas fa-question-circle"></i> "¿Adónde fue mi dinero?"</h3>
-                <p style="margin: 0;">Sin comprobantes digitales, es imposible rastrear cada donación</p>
-              </div>
-              <div style="background: white; border: 2px solid var(--warning); border-radius: 10px; padding: 20px; cursor: pointer;" onclick="openModal('donante-duda-2')">
-                <h3 style="color: var(--warning); margin: 0 0 10px 0;"><i class="fas fa-exclamation-triangle"></i> "¿Qué tan seguro es?"</h3>
-                <p style="margin: 0;">Reportes en Excel y transferencias manuales = riesgo de corrupción</p>
-              </div>
-              <div style="background: white; border: 2px solid var(--hamuq-orange); border-radius: 10px; padding: 20px; cursor: pointer;" onclick="openModal('donante-duda-3')">
-                <h3 style="color: var(--hamuq-orange); margin: 0 0 10px 0;"><i class="fas fa-eye"></i> "¿Puedo verificarlo?"</h3>
-                <p style="margin: 0;">No hay forma independiente de comprobar la información</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 6: Comparativa Tradicional vs Zero-Trust -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Método Tradicional vs Zero-Trust</h2>
-          <div style="margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 900px;">
-            <div style="background: var(--hamuq-orange-light); padding: 25px; border-radius: 12px; border-top: 4px solid var(--danger);">
-              <h3 style="color: var(--danger); margin-top: 0;">❌ Tradicional</h3>
-              <ul style="text-align: left; list-style: none; padding: 0;">
-                <li style="padding: 8px 0;"><i class="fas fa-times" style="color: var(--danger);"></i> Archivos manuales</li>
-                <li style="padding: 8px 0;"><i class="fas fa-times" style="color: var(--danger);"></i> Sin auditoría real</li>
-                <li style="padding: 8px 0;"><i class="fas fa-times" style="color: var(--danger);"></i> Datos alterables</li>
-                <li style="padding: 8px 0;"><i class="fas fa-times" style="color: var(--danger);"></i> Lento (días/semanas)</li>
-                <li style="padding: 8px 0;"><i class="fas fa-times" style="color: var(--danger);"></i> Riesgo de fraude alto</li>
-              </ul>
-            </div>
-            <div style="background: var(--hamuq-teal-light); padding: 25px; border-radius: 12px; border-top: 4px solid var(--success);">
-              <h3 style="color: var(--success); margin-top: 0;">✅ Zero-Trust</h3>
-              <ul style="text-align: left; list-style: none; padding: 0;">
-                <li style="padding: 8px 0;"><i class="fas fa-check" style="color: var(--success);"></i> Trazable digitalmente</li>
-                <li style="padding: 8px 0;"><i class="fas fa-check" style="color: var(--success);"></i> Auditoría automática</li>
-                <li style="padding: 8px 0;"><i class="fas fa-check" style="color: var(--success);"></i> Datos inmutables (blockchain)</li>
-                <li style="padding: 8px 0;"><i class="fas fa-check" style="color: var(--success);"></i> Tiempo real</li>
-                <li style="padding: 8px 0;"><i class="fas fa-check" style="color: var(--success);"></i> Control documentado</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 7: Pilares Conceptuales -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Los 3 Pilares del Zero-Trust</h2>
-          <div class="cards-grid" style="margin-top: 40px;">
-            <div class="card clickable" onclick="openModal('pilar-trazabilidad')">
-              <div class="card-icon"><i class="fas fa-link"></i></div>
-              <div class="card-title">Trazabilidad</div>
-              <div class="card-text">Cada centavo tiene un código único que lo sigue de origen a destino</div>
-            </div>
-            <div class="card clickable" onclick="openModal('pilar-control')">
-              <div class="card-icon"><i class="fas fa-traffic-light"></i></div>
-              <div class="card-title">Control</div>
-              <div class="card-text">Flujo de 3 pasos (Rojo/Amarillo/Verde) para cada gasto</div>
-            </div>
-            <div class="card clickable" onclick="openModal('pilar-inmutabilidad')">
-              <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
-              <div class="card-title">Inmutabilidad</div>
-              <div class="card-text">Registro en blockchain que no puede ser alterado</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 8: Qué es Zero-Trust -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2 class="highlight-orange">¿Qué Significa "Zero-Trust"?</h2>
-          <div style="margin-top: 40px; max-width: 800px; background: var(--hamuq-teal-light); padding: 35px; border-radius: 15px; border-left: 6px solid var(--hamuq-teal);">
-            <p style="font-size: 1.1rem; text-align: left; margin: 0;">
-              <strong>"Cero Confianza"</strong> significa que el sistema <strong>NO confía en palabras</strong> sino en <strong>PRUEBAS DIGITALES</strong>.
-            </p>
-            <p style="font-size: 1.1rem; text-align: left; margin-top: 20px;">
-              Cada movimiento de dinero, cada aprobación, cada documento está registrado de forma verificable e inmutable.
-            </p>
-            <p style="font-size: 1.1rem; text-align: left; margin-top: 20px; color: var(--hamuq-teal-dark);">
-              No es "confío en la directiva" sino "confío en los datos verificables"
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDES 9-15: Más contexto -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Seguridad por Capas</h2>
-          <div style="margin-top: 40px; max-width: 700px;">
-            <div style="position: relative; padding: 20px;">
-              <div style="border: 3px solid var(--hamuq-teal); border-radius: 50%; width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; margin: 0 auto; background: var(--hamuq-teal-light); font-weight: 700; color: var(--hamuq-teal); font-size: 1.1rem; text-align: center;">
-                DATOS
-              </div>
-              <div style="border: 3px solid var(--hamuq-orange); border-radius: 50%; width: 280px; height: 280px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; z-index: -1; background: transparent;"></div>
-              <div style="border: 3px dashed var(--hamuq-teal-dark); border-radius: 50%; width: 380px; height: 380px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; z-index: -2; background: transparent;"></div>
-            </div>
-            <div style="margin-top: 60px; text-align: left;">
-              <p style="margin: 10px 0;"><strong>Capa 1:</strong> Autenticación (JWT + bcrypt)</p>
-              <p style="margin: 10px 0;"><strong>Capa 2:</strong> Roles y permisos granulares</p>
-              <p style="margin: 10px 0;"><strong>Capa 3:</strong> Registros en blockchain</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 10: Transparencia + Privacidad -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Transparencia Total, Privacidad Selectiva</h2>
-          <div style="margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 900px;">
-            <div style="background: var(--hamuq-teal-light); padding: 30px; border-radius: 12px;">
-              <h3 style="color: var(--hamuq-teal); margin-top: 0;">Público Verifica</h3>
-              <p>Registros en blockchain: cualquiera puede verificar que el dinero existe</p>
-            </div>
-            <div style="background: var(--hamuq-orange-light); padding: 30px; border-radius: 12px;">
-              <h3 style="color: var(--hamuq-orange); margin-top: 0;">Privado Protegido</h3>
-              <p>Datos sensibles (donantes, beneficiarios) no están públicos</p>
-            </div>
-          </div>
-          <p style="margin-top: 30px; max-width: 700px;">El resultado: Máxima confianza sin sacrificar privacidad</p>
-        </div>
-      </div>
-
-      <!-- SLIDE 11-15: Regulaciones y casos -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Reguladores Exigen Trazabilidad</h2>
-          <div style="margin-top: 40px; max-width: 800px;">
-            <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
-              <div style="background: white; border-left: 4px solid var(--hamuq-teal); padding: 20px; border-radius: 8px;">
-                <h3 style="color: var(--hamuq-teal); margin: 0 0 10px 0;"><i class="fas fa-balance-scale"></i> SUNAT (Perú)</h3>
-                <p style="margin: 0; font-size: 0.95rem;">Requiere auditoría completa de fondos de organizaciones sociales</p>
-              </div>
-              <div style="background: white; border-left: 4px solid var(--hamuq-orange); padding: 20px; border-radius: 8px;">
-                <h3 style="color: var(--hamuq-orange); margin: 0 0 10px 0;"><i class="fas fa-globe"></i> APCI</h3>
-                <p style="margin: 0; font-size: 0.95rem;">Agencia Peruana de Cooperación Internacional pide trazabilidad digital</p>
-              </div>
-              <div style="background: white; border-left: 4px solid var(--success); padding: 20px; border-radius: 8px;">
-                <h3 style="color: var(--success); margin: 0 0 10px 0;"><i class="fas fa-handshake"></i> Organismos Internacionales</h3>
-                <p style="margin: 0; font-size: 0.95rem;">Fundaciones extranjeras exigen verificación en tiempo real</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 12: Fondos Internacionales -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Fondos Internacionales Exigen Esto</h2>
-          <div style="margin-top: 40px; max-width: 800px; background: var(--hamuq-gray-light); padding: 35px; border-radius: 12px;">
-            <p style="font-size: 1.1rem; margin: 0;">Los organismos que otorgan donaciones en el exterior requieren cada vez más:</p>
-            <ul style="text-align: left; list-style: none; padding: 20px 0 0 0; margin: 0;">
-              <li style="padding: 10px 0;"><strong>✓ Prueba de entrega real</strong> (no solo palabras)</li>
-              <li style="padding: 10px 0;"><strong>✓ Auditorías independientes</strong> (verificables online)</li>
-              <li style="padding: 10px 0;"><strong>✓ Transparencia completa</strong> (sin secretos que ocultar)</li>
-              <li style="padding: 10px 0;"><strong>✓ Certificación digital</strong> (imposible de falsificar)</li>
-            </ul>
-            <p style="margin-top: 25px; color: var(--hamuq-teal); font-weight: 700;">Sin esto, hoy NO SE OBTIENEN FONDOS INTERNACIONALES</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 13: Reguladores en Perú -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Reguladores en Perú</h2>
-          <div class="cards-grid" style="margin-top: 40px;">
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-file-invoice"></i></div>
-              <div class="card-title">SUNAT</div>
-              <div class="card-text">Requiere detalles de cada gasto, auditoría anual completa</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-handshake"></i></div>
-              <div class="card-title">APCI</div>
-              <div class="card-text">Supervisión de cooperación internacional, validación de proyectos</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-law"></i></div>
-              <div class="card-title">SUNARP</div>
-              <div class="card-text">Registro de sociedades, cambios en directiva, transparencia corporativa</div>
-            </div>
-          </div>
-          <p style="margin-top: 30px;">Zero-Trust ayuda a cumplir TODO esto automáticamente.</p>
-        </div>
-      </div>
-
-      <!-- SLIDE 14: Oportunidad para Hamuq -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>La Oportunidad para Fundación Hamuq</h2>
-          <div style="margin-top: 40px; max-width: 850px;">
-            <div style="background: var(--hamuq-teal-light); padding: 25px; border-radius: 12px; border-left: 5px solid var(--hamuq-teal); text-align: left;">
-              <h3 style="margin: 0 0 10px 0; color: var(--hamuq-teal);"><i class="fas fa-seedling"></i> Confianza como Activo Estratégico</h3>
-              <p style="font-size: 0.95rem; margin: 0;">
-                Un sistema de trazabilidad y control como Zero-Trust permite que cada donación quede documentada
-                de principio a fin, fortaleciendo la confianza de donantes actuales y futuros.
-              </p>
-            </div>
-            <div style="margin-top: 20px; background: var(--hamuq-orange-light); padding: 25px; border-radius: 12px; border-left: 5px solid var(--hamuq-orange); text-align: left;">
-              <h3 style="margin: 0 0 10px 0; color: var(--hamuq-orange);"><i class="fas fa-hands-helping"></i> Alineado al Contrato y a la Misión</h3>
-              <p style="font-size: 0.95rem; margin: 0;">
-                El Módulo Básico se centra en controlar cómo se registran, aprueban y rinden los fondos que Hamuq
-                decide entregar en sus proyectos, respetando siempre los alcances definidos en el contrato.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 15: Presentamos Zero-Trust System -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2 class="highlight-orange">Presentamos</h2>
-          <h1>Zero-Trust System</h1>
-          <p style="margin-top: 30px; font-size: 1.2rem; max-width: 700px;">
-            La plataforma que Hamuq necesita para convertir desconfianza en confianza total.
-          </p>
-          <div style="margin-top: 50px; padding: 30px; background: var(--hamuq-teal-light); border-radius: 12px; max-width: 700px;">
-            <p style="margin: 0; font-size: 1rem; color: var(--hamuq-teal-dark); font-weight: 700;">
-              7 módulos integrados • Tecnología blockchain • Auditoría automática • Cumplimiento regulatorio
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 16: Los 7 Módulos -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Los 7 Módulos del Módulo Básico</h2>
-          <div class="cards-grid" style="margin-top: 30px;">
-            <div class="card clickable" onclick="openModal('modulo-1')">
-              <div class="card-icon"><i class="fas fa-link"></i></div>
-              <div class="card-title">1. Trazabilidad</div>
-              <div class="card-text">Código único por donación</div>
-            </div>
-            <div class="card clickable" onclick="openModal('modulo-2')">
-              <div class="card-icon"><i class="fas fa-traffic-light"></i></div>
-              <div class="card-title">2. Semáforo</div>
-              <div class="card-text">Flujo de 3 pasos de aprobación</div>
-            </div>
-            <div class="card clickable" onclick="openModal('modulo-3')">
-              <div class="card-icon"><i class="fas fa-mobile-alt"></i></div>
-              <div class="card-title">3. WebApp</div>
-              <div class="card-text">Rendición de fondos en campo</div>
-            </div>
-            <div class="card clickable" onclick="openModal('modulo-4')">
-              <div class="card-icon"><i class="fas fa-cube"></i></div>
-              <div class="card-title">4. Notario</div>
-              <div class="card-text">Sellos blockchain inmutables</div>
-            </div>
-            <div class="card clickable" onclick="openModal('modulo-5')">
-              <div class="card-icon"><i class="fas fa-users"></i></div>
-              <div class="card-title">5. Roles</div>
-              <div class="card-text">5 perfiles de usuario</div>
-            </div>
-            <div class="card clickable" onclick="openModal('modulo-6')">
-              <div class="card-icon"><i class="fas fa-coins"></i></div>
-              <div class="card-title">6. Ingresos</div>
-              <div class="card-text">Captación omnicanal</div>
-            </div>
-            <div class="card clickable" onclick="openModal('modulo-7')">
-              <div class="card-icon"><i class="fas fa-chart-bar"></i></div>
-              <div class="card-title">7. Dashboard</div>
-              <div class="card-text">Control y reportes en tiempo real</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 17: Mapa Funcional de los Módulos -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Cómo se Conectan los Módulos en el Día a Día</h2>
-          <div style="margin-top: 40px; max-width: 900px;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; text-align: left;">
-              <div style="background: var(--hamuq-teal-light); padding: 25px; border-radius: 12px;">
-                <h3 style="color: var(--hamuq-teal); margin-top: 0;"><i class="fas fa-donate"></i> Ingresos y Registro</h3>
-                <p style="font-size: 0.95rem; margin: 0;">
-                  Cada donación se registra con un código único en el Módulo de Trazabilidad y se relaciona con
-                  proyectos, partidas y responsables dentro del sistema.
-                </p>
-              </div>
-              <div style="background: var(--hamuq-orange-light); padding: 25px; border-radius: 12px;">
-                <h3 style="color: var(--hamuq-orange); margin-top: 0;"><i class="fas fa-traffic-light"></i> Aprobación de Gastos</h3>
-                <p style="font-size: 0.95rem; margin: 0;">
-                  Cuando se quiere usar un fondo, el Módulo de Semáforo guía la solicitud por las tres etapas de
-                  revisión: solicitud, revisión financiera y aprobación directiva.
-                </p>
-              </div>
-              <div style="background: var(--hamuq-gray-light); padding: 25px; border-radius: 12px;">
-                <h3 style="color: var(--hamuq-teal-dark); margin-top: 0;"><i class="fas fa-mobile-alt"></i> Ejecución y Rendición</h3>
-                <p style="font-size: 0.95rem; margin: 0;">
-                  El ejecutor usa la WebApp para rendir con fotos de comprobantes y evidencias. Esas rendiciones
-                  quedan asociadas al mismo código de donación y a la solicitud aprobada.
-                </p>
-              </div>
-              <div style="background: var(--hamuq-teal-light); padding: 25px; border-radius: 12px;">
-                <h3 style="color: var(--hamuq-teal); margin-top: 0;"><i class="fas fa-shield-alt"></i> Sellos y Dashboard</h3>
-                <p style="font-size: 0.95rem; margin: 0;">
-                  Los movimientos clave pueden sellarse en blockchain desde el Notario Digital y el Dashboard central
-                  permite monitorear saldos, alertas y estados de rendición en el sistema.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 18: Stack Tecnológico -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Stack Tecnológico Profesional</h2>
-          <div style="margin-top: 40px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; max-width: 800px;">
-            <div style="background: var(--hamuq-teal-light); padding: 25px; border-radius: 10px;">
-              <h3 style="color: var(--hamuq-teal); margin-top: 0; margin-bottom: 15px;"><i class="fas fa-code"></i> Backend</h3>
-              <p style="margin: 0; font-size: 0.95rem;"><strong>NestJS:</strong> Framework robusto y escalable</p>
-              <p style="margin: 8px 0; font-size: 0.95rem;"><strong>Prisma:</strong> ORM moderno y type-safe</p>
-            </div>
-            <div style="background: var(--hamuq-teal-light); padding: 25px; border-radius: 10px;">
-              <h3 style="color: var(--hamuq-teal); margin-top: 0; margin-bottom: 15px;"><i class="fas fa-paint-brush"></i> Frontend</h3>
-              <p style="margin: 0; font-size: 0.95rem;"><strong>React:</strong> Interfaz rápida y responsiva</p>
-              <p style="margin: 8px 0; font-size: 0.95rem;"><strong>TypeScript:</strong> Código seguro y mantenible</p>
-            </div>
-            <div style="background: var(--hamuq-orange-light); padding: 25px; border-radius: 10px;">
-              <h3 style="color: var(--hamuq-orange); margin-top: 0; margin-bottom: 15px;"><i class="fas fa-cube"></i> Blockchain</h3>
-              <p style="margin: 0; font-size: 0.95rem;"><strong>Polygon:</strong> Red ecológica y rápida</p>
-              <p style="margin: 8px 0; font-size: 0.95rem;"><strong>Ethereum Layer 2:</strong> Bajo costo</p>
-            </div>
-            <div style="background: var(--hamuq-orange-light); padding: 25px; border-radius: 10px;">
-              <h3 style="color: var(--hamuq-orange); margin-top: 0; margin-bottom: 15px;"><i class="fas fa-lock"></i> Seguridad</h3>
-              <p style="margin: 0; font-size: 0.95rem;"><strong>JWT:</strong> Autenticación estándar</p>
-              <p style="margin: 8px 0; font-size: 0.95rem;"><strong>bcrypt:</strong> Contraseñas hasheadas</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 19: Flujo General Donación -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Flujo General de Una Donación</h2>
-          <svg class="diagram" viewBox="0 0 900 350" xmlns="http://www.w3.org/2000/svg">
-            <!-- Step 1 -->
-            <circle cx="80" cy="150" r="40" fill="#128c82"/>
-            <text x="80" y="155" text-anchor="middle" font-family="Montserrat" font-size="24" font-weight="700" fill="white">1</text>
-            <text x="80" y="210" text-anchor="middle" font-family="Open Sans" font-size="11" fill="#4b4b4b">Donación</text>
-            <text x="80" y="225" text-anchor="middle" font-family="Open Sans" font-size="11" fill="#4b4b4b">Recibida</text>
-
-            <!-- Arrow -->
-            <line x1="120" y1="150" x2="190" y2="150" stroke="#128c82" stroke-width="3"/>
-            <polygon points="190,150 180,145 180,155" fill="#128c82"/>
-
-            <!-- Step 2 -->
-            <circle cx="260" cy="150" r="40" fill="#f58220"/>
-            <text x="260" y="155" text-anchor="middle" font-family="Montserrat" font-size="24" font-weight="700" fill="white">2</text>
-            <text x="260" y="210" text-anchor="middle" font-family="Open Sans" font-size="11" fill="#4b4b4b">Código Único</text>
-            <text x="260" y="225" text-anchor="middle" font-family="Open Sans" font-size="11" fill="#4b4b4b">Generado</text>
-
-            <!-- Arrow -->
-            <line x1="300" y1="150" x2="370" y2="150" stroke="#f58220" stroke-width="3"/>
-            <polygon points="370,150 360,145 360,155" fill="#f58220"/>
-
-            <!-- Step 3 -->
-            <circle cx="440" cy="150" r="40" fill="#128c82"/>
-            <text x="440" y="155" text-anchor="middle" font-family="Montserrat" font-size="24" font-weight="700" fill="white">3</text>
-            <text x="440" y="210" text-anchor="middle" font-family="Open Sans" font-size="11" fill="#4b4b4b">Registro en</text>
-            <text x="440" y="225" text-anchor="middle" font-family="Open Sans" font-size="11" fill="#4b4b4b">Sistema</text>
-
-            <!-- Arrow -->
-            <line x1="480" y1="150" x2="550" y2="150" stroke="#128c82" stroke-width="3"/>
-            <polygon points="550,150 540,145 540,155" fill="#128c82"/>
-
-            <!-- Step 4 -->
-            <circle cx="620" cy="150" r="40" fill="#f58220"/>
-            <text x="620" y="155" text-anchor="middle" font-family="Montserrat" font-size="24" font-weight="700" fill="white">4</text>
-            <text x="620" y="210" text-anchor="middle" font-family="Open Sans" font-size="11" fill="#4b4b4b">Sello en</text>
-            <text x="620" y="225" text-anchor="middle" font-family="Open Sans" font-size="11" fill="#4b4b4b">Blockchain</text>
-
-            <!-- Arrow -->
-            <line x1="660" y1="150" x2="730" y2="150" stroke="#f58220" stroke-width="3"/>
-            <polygon points="730,150 720,145 720,155" fill="#f58220"/>
-
-            <!-- Step 5 -->
-            <circle cx="800" cy="150" r="40" fill="#128c82"/>
-            <text x="800" y="155" text-anchor="middle" font-family="Montserrat" font-size="24" font-weight="700" fill="white">5</text>
-            <text x="800" y="210" text-anchor="middle" font-family="Open Sans" font-size="11" fill="#4b4b4b">Donante ve</text>
-            <text x="800" y="225" text-anchor="middle" font-family="Open Sans" font-size="11" fill="#4b4b4b">su donación</text>
-
-            <!-- Info Box -->
-            <rect x="80" y="280" width="740" height="50" fill="#e0f2f1" stroke="#128c82" stroke-width="1" rx="5"/>
-            <text x="450" y="310" text-anchor="middle" font-family="Open Sans" font-size="12" fill="#128c82">Total: ~2 segundos. Sistema totalmente automatizado. Histórico permanente e inmutable.</text>
-          </svg>
-        </div>
-      </div>
-
-      <!-- SLIDE 20: Flujo General Gasto -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Flujo General de Un Gasto</h2>
-          <div style="margin-top: 40px; max-width: 900px;">
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px;">
-              <div style="background: var(--danger); color: white; padding: 20px; border-radius: 10px; text-align: center;">
-                <h3 style="margin: 0 0 10px 0; font-size: 1.3rem;"><i class="fas fa-lightbulb"></i></h3>
-                <p style="margin: 0; font-weight: 700;">Rojo</p>
-                <p style="margin: 5px 0 0 0; font-size: 0.9rem;">Solicitud</p>
-              </div>
-              <div style="background: var(--warning); color: white; padding: 20px; border-radius: 10px; text-align: center;">
-                <h3 style="margin: 0 0 10px 0; font-size: 1.3rem;"><i class="fas fa-search"></i></h3>
-                <p style="margin: 0; font-weight: 700;">Amarillo</p>
-                <p style="margin: 5px 0 0 0; font-size: 0.9rem;">Revisión</p>
-              </div>
-              <div style="background: var(--success); color: white; padding: 20px; border-radius: 10px; text-align: center;">
-                <h3 style="margin: 0 0 10px 0; font-size: 1.3rem;"><i class="fas fa-check-circle"></i></h3>
-                <p style="margin: 0; font-weight: 700;">Verde</p>
-                <p style="margin: 5px 0 0 0; font-size: 0.9rem;">Aprobación</p>
-              </div>
-            </div>
-            <div style="background: var(--hamuq-teal-light); padding: 25px; border-radius: 10px; text-align: left;">
-              <p style="margin: 0;"><strong>Rojo:</strong> Ejecutor de campo solicita gasto con descripción y cotización.</p>
-              <p style="margin: 12px 0 0 0;"><strong>Amarillo:</strong> Finanzas valida saldos, cotización y calendario.</p>
-              <p style="margin: 12px 0 0 0;"><strong>Verde:</strong> Directiva aprueba con firma digital. Se registra hora, fecha, responsable.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 21: Roles y Permisos -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Los 5 Roles del Sistema</h2>
-          <div class="cards-grid" style="margin-top: 30px;">
-            <div class="card clickable" onclick="openModal('rol-admin')">
-              <div class="card-icon"><i class="fas fa-crown"></i></div>
-              <div class="card-title">SuperAdmin</div>
-              <div class="card-text">BlairCode: Configuración global</div>
-            </div>
-            <div class="card clickable" onclick="openModal('rol-directiva')">
-              <div class="card-icon"><i class="fas fa-gavel"></i></div>
-              <div class="card-title">Directiva</div>
-              <div class="card-text">Aprobación de gastos grandes</div>
-            </div>
-            <div class="card clickable" onclick="openModal('rol-finanzas')">
-              <div class="card-icon"><i class="fas fa-calculator"></i></div>
-              <div class="card-title">Finanzas</div>
-              <div class="card-text">Revisión y validación de fondos</div>
-            </div>
-            <div class="card clickable" onclick="openModal('rol-ejecutor')">
-              <div class="card-icon"><i class="fas fa-user-tie"></i></div>
-              <div class="card-title">Ejecutor</div>
-              <div class="card-text">Solicitudes y rendición de campo</div>
-            </div>
-            <div class="card clickable" onclick="openModal('rol-donante')">
-              <div class="card-icon"><i class="fas fa-user-friends"></i></div>
-              <div class="card-title">Donante</div>
-              <div class="card-text">Visualiza solo sus propias donaciones</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 22: Seguridad Capas -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Seguridad: 3 Capas de Protección</h2>
-          <div style="margin-top: 40px; max-width: 800px;">
-            <div style="background: var(--hamuq-teal-light); padding: 25px; margin-bottom: 20px; border-radius: 10px; border-left: 5px solid var(--hamuq-teal);">
-              <h3 style="color: var(--hamuq-teal); margin-top: 0;"><i class="fas fa-lock"></i> Capa 1: Autenticación</h3>
-              <p style="margin: 0;">JWT (JSON Web Tokens) + contraseñas hasheadas con bcrypt. Acceso solo con credenciales válidas.</p>
-            </div>
-            <div style="background: var(--hamuq-orange-light); padding: 25px; margin-bottom: 20px; border-radius: 10px; border-left: 5px solid var(--hamuq-orange);">
-              <h3 style="color: var(--hamuq-orange); margin-top: 0;"><i class="fas fa-shield-alt"></i> Capa 2: Autorización</h3>
-              <p style="margin: 0;">Roles granulares. Cada usuario solo ve/hace lo que le corresponde. Un ejecutor no puede aprobar gastos.</p>
-            </div>
-            <div style="background: var(--success); color: white; padding: 25px; border-radius: 10px; border-left: 5px solid var(--hamuq-teal);">
-              <h3 style="margin-top: 0;"><i class="fas fa-cube"></i> Capa 3: Inmutabilidad (Blockchain)</h3>
-              <p style="margin: 0;">Cada transacción importante se sella en Polygon. Imposible alterar datos históricos sin dejar evidencia.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 23: Blockchain Polygon -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Blockchain en Polygon: ¿Qué Significa?</h2>
-          <div style="margin-top: 40px; max-width: 800px; background: var(--hamuq-teal-light); padding: 30px; border-radius: 12px;">
-            <h3 style="color: var(--hamuq-teal); margin-top: 0; text-align: left;">Polygon es una red de blockchain rápida, ecológica y económica.</h3>
-            <div style="text-align: left; margin-top: 20px;">
-              <p><strong>Rápido:</strong> Transacciones en menos de 1 segundo</p>
-              <p style="margin-top: 10px;"><strong>Ecológico:</strong> Usa Proof of Stake (no contamina como Bitcoin)</p>
-              <p style="margin-top: 10px;"><strong>Económico:</strong> Costo por transacción: $0.001 USD aproximadamente</p>
-              <p style="margin-top: 10px;"><strong>Seguro:</strong> Está vinculada a Ethereum, la red más segura del mundo</p>
-            </div>
-          </div>
-          <p style="margin-top: 30px;">Cada sello en blockchain = Prueba criptográfica que algo existió en esa fecha/hora y no puede ser modificado.</p>
-        </div>
-      </div>
-
-      <!-- SLIDE 24: Dashboard Preview -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Dashboard Ejecutivo: Vista General</h2>
-          <div style="margin-top: 40px; background: var(--hamuq-gray-light); padding: 30px; border-radius: 12px; border: 2px solid var(--hamuq-teal);">
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 25px;">
-              <div style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
-                <p style="margin: 0; font-size: 0.9rem; color: #2d3748; font-weight: 700;">DISPONIBLE</p>
-                <p style="margin: 8px 0 0 0; font-size: 2rem; color: var(--success); font-weight: 700;">S/ 45,000</p>
-              </div>
-              <div style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
-                <p style="margin: 0; font-size: 0.9rem; color: #2d3748; font-weight: 700;">COMPROMETIDO</p>
-                <p style="margin: 8px 0 0 0; font-size: 2rem; color: var(--warning); font-weight: 700;">S/ 12,000</p>
-              </div>
-              <div style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
-                <p style="margin: 0; font-size: 0.9rem; color: #2d3748; font-weight: 700;">EJECUTADO</p>
-                <p style="margin: 8px 0 0 0; font-size: 2rem; color: var(--hamuq-teal); font-weight: 700;">S/ 33,000</p>
-              </div>
-            </div>
-            <p style="margin: 0; text-align: center; color: #2d3748; font-size: 0.95rem;">
-              Saldos actualizados en tiempo real. Basados en lo que está registrado en el sistema (responsabilidad del encargado).
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 25: Integraciones Externas -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Integraciones y Conexiones Externas</h2>
-          <div class="cards-grid" style="margin-top: 30px;">
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-university"></i></div>
-              <div class="card-title">Pasarela de Pago</div>
-              <div class="card-text">Se integra durante desarrollo (aún a definir con cliente)</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-envelope"></i></div>
-              <div class="card-title">Email Automático</div>
-              <div class="card-text">Notificaciones a usuarios y registros de auditoría</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-globe"></i></div>
-              <div class="card-title">APIs Externas</div>
-              <div class="card-text">Conexiones con servicios de terceros si se requieren</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-cube"></i></div>
-              <div class="card-title">Blockchain</div>
-              <div class="card-text">Polygon para sellos criptográficos</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-hdd"></i></div>
-              <div class="card-title">Cloud Storage</div>
-              <div class="card-text">Respaldo automático de datos</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-file-export"></i></div>
-              <div class="card-title">Exportación</div>
-              <div class="card-text">CSV compatible con herramientas contables</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 26: Introducción Módulo 1 - Trazabilidad -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Módulo 1: Trazabilidad – "Pintado" de Fondos</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            Este módulo se encarga de que cada donación tenga una identidad clara dentro del sistema: un código único
-            que la vincula con proyectos, partidas, responsables y comprobantes.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 27: ¿Qué es un Código Único? -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>¿Qué es un Código Único de Donación?</h2>
-          <p style="margin-top: 30px; max-width: 750px;">
-            Cada aporte recibe un identificador como <strong>HAM-2026-03-001</strong>, que incluye fundación, año, mes
-            y número correlativo. Ese código seguirá a la donación en todo el sistema.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 28: Información Capturada (1) -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Información Capturada por Cada Donación (1)</h2>
-          <div class="cards-grid" style="margin-top: 30px;">
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-user"></i></div>
-              <div class="card-title">Origen del Aporte</div>
-              <div class="card-text">Nombre o razón social del donante, tipo de donante y país de procedencia.</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-money-bill-wave"></i></div>
-              <div class="card-title">Monto y Moneda</div>
-              <div class="card-text">Cantidad aportada, moneda original y, si aplica, tipo de cambio registrado.</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-calendar-alt"></i></div>
-              <div class="card-title">Fecha y Medio</div>
-              <div class="card-text">Fecha en que se recibe la donación y medio utilizado (transferencia, Yape, Plin, etc.).</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 29: Información Capturada (2) -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Información Capturada por Cada Donación (2)</h2>
-          <div class="cards-grid" style="margin-top: 30px;">
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-project-diagram"></i></div>
-              <div class="card-title">Proyecto Asociado</div>
-              <div class="card-text">Proyecto, programa o línea de acción a la que se asigna el dinero dentro del contrato.</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-list-ol"></i></div>
-              <div class="card-title">Partida Presupuestal</div>
-              <div class="card-text">Partida interna que permitirá después filtrar y analizar cómo se usaron los fondos.</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-file-invoice"></i></div>
-              <div class="card-title">Comprobante / Referencia</div>
-              <div class="card-text">Número de comprobante, referencia bancaria u otro identificador que respalde el ingreso.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 30: Rastreo de Dinero -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Rastreo del Dinero: De Origen a Uso Final</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            Gracias al código único y a las partidas, Zero-Trust permite seguir cada fondo desde que entra al sistema
-            hasta que se ejecuta en un proyecto o actividad específica.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 31: Partidas y Proyectos -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Partidas Presupuestales y Proyectos</h2>
-          <div class="cards-grid" style="margin-top: 30px;">
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-layer-group"></i></div>
-              <div class="card-title">Partidas Detalladas</div>
-              <div class="card-text">El sistema registra en qué partidas se "pintan" los fondos dentro del plan anual.</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-school"></i></div>
-              <div class="card-title">Proyectos y Obras</div>
-              <div class="card-text">Cada partida se vincula a proyectos concretos: obras, servicios, materiales y más.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 32: Comprobantes Vinculados -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Comprobantes Vinculados a Cada Donación</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            Los comprobantes que respaldan las donaciones (boletas, vouchers, constancias) se asocian al código
-            de donación y quedan listos para ser contrastados durante la validación manual.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 33: Portal del Donante -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Portal del Donante</h2>
-          <p style="margin-top: 30px; max-width: 780px;">
-            El sistema contempla una vista específica para donantes, donde solo pueden acceder al historial de sus
-            propios aportes y al resumen de cómo fueron utilizados dentro del sistema.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 34: Qué Ve el Donante -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Qué Ve el Donante en su Portal</h2>
-          <div class="cards-grid" style="margin-top: 30px;">
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-list"></i></div>
-              <div class="card-title">Listado de Donaciones</div>
-              <div class="card-text">Fecha, monto, proyecto asociado y estado de ejecución dentro del sistema.</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-image"></i></div>
-              <div class="card-title">Evidencias de Uso</div>
-              <div class="card-text">Resumen de las evidencias cargadas en las rendiciones relacionadas a sus aportes.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 35: Historial Completo -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Historial Completo de Cada Donación</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            El sistema registra el ciclo completo: ingreso, asignación a partidas y proyectos, aprobaciones de gasto,
-            rendiciones y sellos digitales asociados.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 36: Hash Blockchain -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Sello Digital en Blockchain para Registros Clave</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            Para ciertos movimientos definidos en el contrato, el sistema puede generar un hash único en la red
-            Polygon que sirve como constancia criptográfica de que el dato existía en un momento específico.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 37: Verificabilidad Pública -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Verificabilidad Pública sin Exponer Datos Sensibles</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            Ciertos sellos se pueden consultar públicamente en la blockchain para demostrar que la información fue
-            registrada, sin revelar la identidad de donantes ni beneficiarios.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 38: Caso de Uso Completo -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Ejemplo Completo de Trazabilidad</h2>
-          <p style="margin-top: 30px; max-width: 820px;">
-            Una donación etiquetada a un proyecto concreto se sigue desde su registro con código único hasta su
-            rendición, pasando por la aprobación de gasto y las evidencias cargadas en la WebApp.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 39: Introducción Módulo 2 - Semáforo -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Módulo 2: Semáforo de Aprobaciones</h2>
-          <p style="margin-top: 30px; max-width: 780px;">
-            Este módulo define el flujo de revisión de cada gasto en tres pasos visuales: solicitud, revisión
-            financiera y aprobación directiva.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 40: Los 3 Pasos del Semáforo -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Los 3 Pasos del Semáforo</h2>
-          <div class="cards-grid" style="margin-top: 30px;">
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-circle" style="color: var(--danger);"></i></div>
-              <div class="card-title">Rojo: Solicitud</div>
-              <div class="card-text">El ejecutor registra qué quiere gastar, cuánto y para qué partida/proyecto.</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-circle" style="color: var(--warning);"></i></div>
-              <div class="card-title">Amarillo: Revisión</div>
-              <div class="card-text">Finanzas verifica saldos, coherencia con el plan y documentación.</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-circle" style="color: var(--success);"></i></div>
-              <div class="card-title">Verde: Aprobación</div>
-              <div class="card-text">La directiva autoriza o rechaza y queda registro de la decisión.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 41: Solicitud de Gasto -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Paso 1 – Solicitud de Gasto</h2>
-          <p style="margin-top: 30px; max-width: 780px;">
-            El ejecutor crea una solicitud indicando descripción del gasto, monto estimado, tipo de gasto y proyecto
-            relacionado, junto con la partida presupuestal a la que se cargará.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 42: Campos de la Solicitud -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Campos Clave en la Solicitud</h2>
-          <div class="cards-grid" style="margin-top: 30px;">
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-align-left"></i></div>
-              <div class="card-title">Descripción</div>
-              <div class="card-text">Qué se quiere adquirir o contratar, con el mayor detalle útil posible.</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-coins"></i></div>
-              <div class="card-title">Monto Estimado</div>
-              <div class="card-text">Importe aproximado que se espera gastar, según el contrato o la cotización.</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-receipt"></i></div>
-              <div class="card-title">Cotización / Referencia</div>
-              <div class="card-text">Documento o referencia que sustenta el cálculo del monto solicitado.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 43: Dinero Bloqueado en el Sistema -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Dinero "Bloqueado" Dentro del Sistema</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            Cuando se aprueba una solicitud, el sistema marca esos fondos como comprometidos en la partida
-            correspondiente, ayudando a evitar sobreasignar recursos dentro del plan definido.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 44: Modalidad A - Compras Regulares -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Modalidad A: Compras Regulares</h2>
-          <p style="margin-top: 30px; max-width: 780px;">
-            Pensada para gastos más simples y frecuentes: materiales, suministros básicos y servicios menores
-            considerados en el contrato.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 45: Modalidad B - Obras y Servicios Especiales -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Modalidad B: Obras y Servicios Especiales</h2>
-          <p style="margin-top: 30px; max-width: 780px;">
-            Para obras, servicios profesionales y otros compromisos que requieren un nivel mayor de detalle y
-            seguimiento en las solicitudes y rendiciones.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 46: Revisión Financiera -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Paso 2 – Revisión Financiera</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            El área de finanzas revisa que el gasto solicitado encaje con los saldos disponibles, el calendario
-            valorizado y las reglas definidas en el contrato.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 47: Validación de Saldos -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Validación de Saldos en el Sistema</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            El sistema ayuda a mostrar cuánto hay disponible por proyecto y partida para que finanzas tome una
-            decisión informada al revisar cada solicitud.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 48: Congruencia con el Plan -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Congruencia con el Calendario y el Plan</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            Cada solicitud se analiza respecto al calendario valorizado y a las metas del proyecto, ayudando a
-            mantener orden y disciplina en la ejecución.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 49: Tipos de Gasto y Vistas -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Vistas por Tipo de Gasto en el Sistema</h2>
-          <div class="cards-grid" style="margin-top: 30px;">
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-tools"></i></div>
-              <div class="card-title">Obras y Servicios</div>
-              <div class="card-text">Construcciones, mejoras de infraestructura, servicios especializados.</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-box-open"></i></div>
-              <div class="card-title">Materiales</div>
-              <div class="card-text">Insumos, equipos y otros bienes necesarios para las actividades.</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-briefcase"></i></div>
-              <div class="card-title">Asesoría y Servicios Profesionales</div>
-              <div class="card-text">Consultorías, acompañamiento técnico y servicios de apoyo.</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-users"></i></div>
-              <div class="card-title">Mano de Obra y Voluntariado</div>
-              <div class="card-text">Registros asociados a trabajo humano, según lo contemple el contrato.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 50: Aprobación Directiva -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Paso 3 – Aprobación de la Directiva</h2>
-          <p style="margin-top: 30px; max-width: 780px;">
-            Una vez revisado el gasto, la directiva aprueba o rechaza la solicitud. Esa decisión queda registrada
-            con nombre, fecha y hora dentro del sistema.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 51: Registro de Firma Interna -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Registro de Aprobación Interna</h2>
-          <p style="margin-top: 30px; max-width: 780px;">
-            Zero-Trust no reemplaza firmas legales externas, pero sí registra quién autorizó un gasto dentro de la
-            plataforma, apoyando la trazabilidad interna.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 52: Responsabilidad Trazable -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Responsabilidad Trazable para Cada Gasto</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            Desde la persona que solicita hasta quien aprueba, cada paso deja un registro que facilita auditorías,
-            revisiones internas y protección de la directiva.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 53: Beneficios del Semáforo -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Beneficios del Módulo de Semáforo</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            Orden en la aprobación, claridad de responsabilidades y mejor control sobre el ritmo de ejecución de los
-            recursos asignados a cada proyecto.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 54: Protección para la Directiva -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Apoyo a la Protección de la Directiva</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            Al quedar documentadas las decisiones y el contexto de cada gasto, es más sencillo demostrar que las
-            autorizaciones siguieron un proceso claro y acordado.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 55: Resumen Visual del Flujo de Aprobación -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Resumen Visual del Flujo de Aprobación</h2>
-          <p style="margin-top: 30px; max-width: 820px;">
-            El semáforo de Zero-Trust organiza en tres etapas lo que muchas veces se maneja por correo o de palabra,
-            dejando evidencia estructurada de cada paso.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 56: Introducción WebApp de Rendición -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Módulo 3: WebApp de Rendición</h2>
-          <p style="margin-top: 30px; max-width: 780px;">
-            Herramienta pensada para que los ejecutores rindan gastos de forma simple desde el lugar donde realizan
-            las actividades, usando navegador o dispositivo móvil.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 57: Responsivo en Móviles -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Diseñada para Móviles y Escritorio</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            La interfaz se adapta a pantallas pequeñas y grandes, facilitando el uso tanto en campo como en oficina.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 58: Carga de Facturas -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Carga de Comprobantes y Facturas</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            El ejecutor puede subir imágenes de facturas, boletas u otros comprobantes, asociándolos a la solicitud
-            de gasto aprobada.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 59: Carga de Evidencias de Ejecución -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Evidencias de Ejecución</h2>
-          <p style="margin-top: 30px; max-width: 780px;">
-            Además de los comprobantes, se pueden adjuntar fotos u otros archivos que muestren la ejecución real del
-            gasto en campo, según se defina en el contrato.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 60: Sello de Fecha y Hora -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Sello Automático de Fecha y Hora</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            Cada rendición queda registrada con fecha y hora en el sistema, ayudando a verificar plazos y tiempos
-            de respuesta.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 61: Alertas de Plazo de Rendición -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Alertas por Plazos de Rendición</h2>
-          <p style="margin-top: 30px; max-width: 780px;">
-            El sistema puede señalar qué rendiciones están por vencer o llevan demasiado tiempo pendientes, para que
-            el equipo actúe a tiempo.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 62: Validación Automática vs Manual en Rendición -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Apoyo a la Validación de Rendiciones</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            Ciertas verificaciones se pueden automatizar a nivel de formato y consistencia básica, pero la revisión
-            de contenido sigue a cargo de las personas responsables de control.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 63: Historial de Rendiciones -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Historial de Rendiciones por Proyecto</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            Cada proyecto puede verse con su listado de rendiciones, estados (pendiente, observado, aprobado) y
-            vínculos a las evidencias que se cargaron.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 64: Introducción Notario Digital -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Módulo 4: Notario Digital</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            Componente encargado de generar sellos digitales para ciertos registros, usando tecnología blockchain
-            en la red Polygon, cuando corresponda según el alcance del contrato.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 65: Qué es un Sello en Blockchain -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Qué es un "Sello" en Blockchain</h2>
-          <p style="margin-top: 30px; max-width: 820px;">
-            Un sello representa un resumen criptográfico de un dato o conjunto de datos. Sirve como comprobante de
-            que esa información existía y no fue modificada después.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 66: Red Polygon -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Uso de la Red Polygon</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            Polygon es una red compatible con Ethereum que permite sellar información con costos bajos y buen
-            rendimiento, adecuada para los volúmenes previstos en el módulo básico.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 67: Hash Criptográfico -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Hash Criptográfico Único</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            Cada sello incluye un hash: una cadena de caracteres que cambia por completo aunque se modifique solo un
-            detalle del dato original, lo que ayuda a detectar alteraciones.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 68: Registros Verificables -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Registros que Pueden Verificarse Externamente</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            De acuerdo al contrato, ciertos sellos podrán consultarse en exploradores públicos de la red, como una
-            capa adicional de transparencia.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 69: Dificultar Alteraciones -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Por Qué el Sello Dificulta Alteraciones</h2>
-          <p style="margin-top: 30px; max-width: 820px;">
-            Si alguien intentara cambiar un dato sellado, el nuevo hash no coincidiría con el registrado en la red,
-            lo que haría evidente la modificación.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 70: Apoyo a Auditorías -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Apoyo a Auditorías y Requerimientos Externos</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            Los sellos digitales pueden utilizarse como respaldo adicional cuando se rinden cuentas ante cooperantes
-            o entidades que valoran el uso de tecnologías verificables.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 71: Control de Acceso y Roles -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Módulo 5: Control de Acceso y Roles</h2>
-          <p style="margin-top: 30px; max-width: 800px;">
-            Define qué puede ver y hacer cada tipo de usuario: directiva, finanzas, ejecutores, donantes y equipo
-            técnico.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 72: Los 5 Roles del Sistema -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Roles Principales Dentro del Sistema</h2>
-          <div class="cards-grid" style="margin-top: 30px;">
-            <div class="card clickable" onclick="openModal('rol-directiva')">
-              <div class="card-icon"><i class="fas fa-user-tie"></i></div>
-              <div class="card-title">Directiva</div>
-              <div class="card-text">Aprueba gastos relevantes y consulta reportes de alto nivel.</div>
-            </div>
-            <div class="card clickable" onclick="openModal('rol-finanzas')">
-              <div class="card-icon"><i class="fas fa-calculator"></i></div>
-              <div class="card-title">Finanzas</div>
-              <div class="card-text">Revisa solicitudes, valida saldos y coherencia con el plan.</div>
-            </div>
-            <div class="card clickable" onclick="openModal('rol-ejecutor')">
-              <div class="card-icon"><i class="fas fa-user-check"></i></div>
-              <div class="card-title">Ejecutor</div>
-              <div class="card-text">Solicita gastos y rinde con evidencias.</div>
-            </div>
-            <div class="card clickable" onclick="openModal('rol-donante')">
-              <div class="card-icon"><i class="fas fa-hand-holding-usd"></i></div>
-              <div class="card-title">Donante</div>
-              <div class="card-text">Accede a su propio historial de aportes en el portal correspondiente.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 73: Autenticación -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Autenticación y Gestión de Sesiones</h2>
-          <p style="margin-top: 30px; max-width: 780px;">
-            El sistema contempla mecanismos como JWT y manejo seguro de contraseñas para proteger el acceso a las
-            vistas internas, de acuerdo a las buenas prácticas técnicas que acompañan el contrato.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 74: Módulo 6 - Ingresos Omnicanal -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Módulo 6: Ingresos Omnicanal</h2>
-          <p style="margin-top: 30px; max-width: 780px;">
-            Centraliza el registro de aportes provenientes de distintos medios de pago que Hamuq utilice dentro del
-            alcance del Módulo Básico.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 75: Métodos de Pago en el Sistema -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Métodos de Pago Considerados</h2>
-          <p style="margin-top: 30px; max-width: 780px;">
-            El sistema puede registrar aportes recibidos por transferencia bancaria u otros medios definidos, siempre
-            que el responsable cargue el comprobante y valide manualmente su ingreso real.
-          </p>
-        </div>
-      </div>
-
-      <!-- SLIDE 76: Sistema Manual (CRÍTICO) -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2 class="color-danger">⚠️ CRÍTICO: Validación MANUAL</h2>
-          <div style="margin-top: 40px; background: var(--hamuq-orange-light); padding: 35px; border-radius: 12px; border: 3px solid var(--danger); max-width: 800px;">
-            <p style="font-size: 1.1rem; margin: 0; text-align: left; color: var(--danger); font-weight: 700;">
-              El sistema NO valida donaciones automáticamente con el banco.
-            </p>
-            <p style="margin-top: 20px; font-size: 1rem; text-align: left;">
-              El encargado de Hamuq debe:
-            </p>
-            <ol style="text-align: left; margin: 15px 0 0 0; padding-left: 20px;">
-              <li style="margin: 10px 0;"><strong>Recibir el comprobante</strong> (donante lo sube al sistema)</li>
-              <li style="margin: 10px 0;"><strong>Verificar en el banco</strong> que el dinero llegó realmente</li>
-              <li style="margin: 10px 0;"><strong>Cargar manualmente</strong> en el sistema: fecha, monto, concepto</li>
-              <li style="margin: 10px 0;"><strong>El sistema cruza datos</strong> y detecta discrepancias</li>
-            </ol>
-          </div>
-          <p style="margin-top: 30px; color: var(--danger); font-weight: 700;">Si el encargado no lo hace: no hay datos → no hay alertas → no hay control</p>
-        </div>
-      </div>
-
-      <!-- SLIDE 81: Alcance del Módulo Básico -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>¿Qué Sí Aporta el Módulo Básico de Zero-Trust?</h2>
-          <div style="margin-top: 40px; max-width: 900px;">
-            <div class="cards-grid">
-              <div class="card">
-                <div class="card-icon"><i class="fas fa-link"></i></div>
-                <div class="card-title">Trazabilidad Completa</div>
-                <div class="card-text">Cada fondo entregado queda vinculado a proyectos, partidas y comprobantes, con un código único que lo sigue en todo el sistema.</div>
-              </div>
-              <div class="card">
-                <div class="card-icon"><i class="fas fa-traffic-light"></i></div>
-                <div class="card-title">Control de Aprobaciones</div>
-                <div class="card-text">El flujo Rojo–Amarillo–Verde registra quién solicita, quién revisa y quién aprueba cada gasto antes de ejecutarlo.</div>
-              </div>
-              <div class="card">
-                <div class="card-icon"><i class="fas fa-mobile-alt"></i></div>
-                <div class="card-title">Rendición Ordenada</div>
-                <div class="card-text">La WebApp permite rendir con fotos y evidencias, generando un historial claro por proyecto, ejecutor y tipo de gasto.</div>
-              </div>
-              <div class="card">
-                <div class="card-icon"><i class="fas fa-bell"></i></div>
-                <div class="card-title">Alertas y Seguimiento</div>
-                <div class="card-text">El sistema ayuda a detectar atrasos e inconsistencias y a priorizar dónde mirar, facilitando la detección temprana de posibles fraudes.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 82: Control que Ayuda a Prevenir Fraudes -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Cómo el Control de Zero-Trust Ayuda a Alertar Sobre Fraudes</h2>
-          <div style="margin-top: 40px; max-width: 850px;">
-            <div style="background: var(--hamuq-teal-light); padding: 30px; border-radius: 12px; text-align: left;">
-              <p style="margin: 0 0 15px 0; font-size: 1.05rem;">
-                El sistema no reemplaza la responsabilidad humana, pero sí hace mucho más difícil que un fraude pase desapercibido.
-              </p>
-              <ul style="margin: 10px 0 0 20px; padding: 0; font-size: 0.95rem;">
-                <li style="margin: 6px 0;">Cada movimiento deja rastro: quién, cuándo, para qué y con qué evidencia.</li>
-                <li style="margin: 6px 0;">Las rendiciones atrasadas o incompletas generan alertas y llamados de atención.</li>
-                <li style="margin: 6px 0;">Los sellos digitales ayudan a probar que la información no fue cambiada después.</li>
-                <li style="margin: 6px 0;">Los reportes internos facilitan que auditorías y directiva se enfoquen en los casos de riesgo.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 83: Beneficios Reales -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Beneficios Reales para Fundación Hamuq</h2>
-          <div class="cards-grid" style="margin-top: 30px;">
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-eye"></i></div>
-              <div class="card-title">Más Transparencia</div>
-              <div class="card-text">Donantes y directiva pueden seguir cada fondo dentro del sistema con un historial claro y ordenado.</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-user-shield"></i></div>
-              <div class="card-title">Menor Riesgo de Fraude</div>
-              <div class="card-text">El registro detallado de solicitudes, aprobaciones y rendiciones dificulta prácticas irregulares y facilita detectarlas.</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-clipboard-check"></i></div>
-              <div class="card-title">Auditorías Más Simples</div>
-              <div class="card-text">La información ya está organizada por proyectos, partidas, fechas y responsables, reduciendo el trabajo manual de auditoría.</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-hand-holding-heart"></i></div>
-              <div class="card-title">Mejor Relación con Donantes</div>
-              <div class="card-text">La trazabilidad mejora la confianza y facilita explicar, con evidencia, cómo se usan los recursos que confían en Hamuq.</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-gavel"></i></div>
-              <div class="card-title">Soporte al Cumplimiento</div>
-              <div class="card-text">El sistema ayuda a documentar lo que piden reguladores y cooperantes, apoyando la gestión legal y administrativa.</div>
-            </div>
-            <div class="card">
-              <div class="card-icon"><i class="fas fa-chart-bar"></i></div>
-              <div class="card-title">Decisiones Basadas en Datos</div>
-              <div class="card-text">Los reportes internos permiten analizar cómo se ejecutan los fondos y priorizar mejor futuros proyectos.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 84: Próximos Pasos -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h2>Próximos Pasos: Implementación</h2>
-          <div style="margin-top: 40px; max-width: 800px;">
-            <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
-              <div style="background: var(--hamuq-teal-light); padding: 25px; border-radius: 10px; border-left: 5px solid var(--hamuq-teal);">
-                <h3 style="color: var(--hamuq-teal); margin: 0 0 10px 0;"><i class="fas fa-handshake"></i> Semanas 1-2: Kick-off</h3>
-                <p style="margin: 0;">Firma de contrato, definición de equipo, acceso a infraestructura</p>
-              </div>
-              <div style="background: var(--hamuq-orange-light); padding: 25px; border-radius: 10px; border-left: 5px solid var(--hamuq-orange);">
-                <h3 style="color: var(--hamuq-orange); margin: 0 0 10px 0;"><i class="fas fa-code"></i> Semanas 3-8: Desarrollo</h3>
-                <p style="margin: 0;">Desarrollo de módulos, integraciones, pruebas básicas</p>
-              </div>
-              <div style="background: var(--success); color: white; padding: 25px; border-radius: 10px; border-left: 5px solid var(--hamuq-teal);">
-                <h3 style="margin: 0 0 10px 0;"><i class="fas fa-microscope"></i> Semanas 9-11: UAT + Capacitación</h3>
-                <p style="margin: 0;">Pruebas con tu equipo, capacitación, ajustes finales</p>
-              </div>
-              <div style="background: var(--hamuq-teal); color: white; padding: 25px; border-radius: 10px; border-left: 5px solid var(--hamuq-orange);">
-                <h3 style="margin: 0 0 10px 0;"><i class="fas fa-rocket"></i> Semana 12: Go Live</h3>
-                <p style="margin: 0;">Despliegue en producción. Hamuq comienza a usar Zero-Trust.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SLIDE 85: Cierre -->
-      <div class="slide">
-        <div class="slide-inner">
-          <h1 class="color-teal" style="font-size: 3.5rem;">El futuro de la gestión de fondos</h1>
-          <h2 style="margin-top: 30px; color: var(--hamuq-orange);">es ahora</h2>
-          <div style="margin-top: 60px; padding: 40px; background: linear-gradient(135deg, var(--hamuq-teal-light), var(--hamuq-orange-light)); border-radius: 15px; max-width: 700px;">
-            <p style="font-size: 1.2rem; margin: 0; color: var(--hamuq-teal-dark); font-weight: 700;">
-              <i class="fas fa-check-circle"></i> Trazabilidad Total
-            </p>
-            <p style="font-size: 1.2rem; margin: 15px 0 0 0; color: var(--hamuq-teal-dark); font-weight: 700;">
-              <i class="fas fa-check-circle"></i> Seguridad Comprobada
-            </p>
-            <p style="font-size: 1.2rem; margin: 15px 0 0 0; color: var(--hamuq-teal-dark); font-weight: 700;">
-              <i class="fas fa-check-circle"></i> Confianza Restaurada
-            </p>
-          </div>
-          <p style="margin-top: 40px; font-size: 1.1rem; color: #2d3748;">
-            Hamuq, ¿listo para transformar tu gestión de fondos?
-          </p>
+        <div class="topbar-meta">
+          <div class="meta-pill">Fundación Hamuq Perú</div>
+          <div class="meta-pill">Módulo básico | BlairCode</div>
         </div>
       </div>
-
+      <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
     </div>
 
-    <!-- Navigation Controls -->
-    <div class="controls">
-      <button class="btn-nav" id="btn-prev" onclick="previousSlide()"><i class="fas fa-chevron-left"></i></button>
-      <div class="slide-counter">
-        <span id="currentSlide">1</span> / <span id="totalSlides">85</span>
-      </div>
-      <button class="btn-nav" id="btn-next" onclick="nextSlide()"><i class="fas fa-chevron-right"></i></button>
-    </div>
-  </div>
+    <main class="deck" id="deck"></main>
 
-  <!-- Modal -->
-  <div class="modal-overlay" id="modal">
-    <div class="modal-box">
-      <button class="modal-close" onclick="closeModal()">✕</button>
-      <div id="modal-content"></div>
+    <div class="scroll-hint">
+      <div class="wheel"></div>
+      <span>Rueda o usa ↓ ↑</span>
+    </div>
+
+    <div class="nav-cluster">
+      <button class="nav-btn" id="prevBtn" aria-label="Anterior">↑</button>
+      <div class="nav-info">
+        <strong>Slide</strong>
+        <span id="counterText">1 / 80</span>
+      </div>
+      <button class="nav-btn nav-btn--neutral" id="autoBtn" aria-label="Auto reproducción">Auto</button>
+      <button class="nav-btn nav-btn--ghost" id="nextBtn" aria-label="Siguiente">↓</button>
+    </div>
+
+    <div class="modal-layer" id="modalLayer" aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-head">
+          <div>
+            <h3 id="modalTitle"></h3>
+            <p id="modalIntro"></p>
+          </div>
+          <button class="modal-close" id="modalClose" aria-label="Cerrar modal">×</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+      </div>
     </div>
   </div>
 
   <script>
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.slide');
-    const totalSlides = slides.length;
+    gsap.registerPlugin(Observer);
 
-    // Initialize
-    document.getElementById('totalSlides').textContent = totalSlides;
-    updateSlide();
+    const c = (icon, title, text, modal) => ({ icon, title, text, modal });
+    const f = (step, title, text) => [step, title, text];
+    const r = (title, text) => [title, text];
+    const m = (title, intro, blocks, bullets = []) => ({ title, intro, blocks, bullets });
+    const s = (id, eyebrow, title, lede, visual, modal, extra = {}) => ({ id, eyebrow, title, lede, visual, modal, ...extra });
 
-    function showSlide(n) {
-      slides.forEach(slide => {
-        slide.classList.remove('active');
+    const modalContent = {
+      system: m("Zero-Trust System en una sola lectura", "El Módulo Básico articula control, trazabilidad y evidencia verificable sobre una sola operación digital.", [
+        { title: "Qué ordena", body: "Donaciones, códigos únicos, aprobaciones, rendiciones, roles, captación y dashboard ejecutivo." },
+        { title: "Qué protege", body: "La relación entre origen del fondo, decisión de gasto, evidencia de ejecución y consulta posterior." },
+        { title: "Qué habilita", body: "Una gestión más defendible frente a directiva, auditoría, cooperación y donantes." }
+      ], ["El deck queda limitado al Módulo Básico del contrato.", "La propuesta vende control operativo y trazabilidad verificable.", "Cada slide resume; el detalle vive en los popups."]),
+      crisisFraude: m("La confianza se rompe cuando no existe una historia verificable", "El problema no es solo el fraude. También dañan la opacidad, la demora y la incapacidad de reconstruir el recorrido del aporte.", [
+        { title: "Donante", body: "Necesita saber adónde fue su aporte, en qué estado está y qué evidencia lo respalda." },
+        { title: "Finanzas", body: "Necesita consistencia entre solicitud, partida, ejecución, soporte y cierre." },
+        { title: "Directiva", body: "Necesita decidir con contexto y dejar una huella institucional clara." }
+      ]),
+      comparativa: m("El cambio real está en el método de trabajo", "Zero-Trust no es una capa cosmética. Es una forma más estructurada de registrar, aprobar, rendir y verificar.", [
+        { title: "Modelo fragmentado", body: "Archivos, reportes y aprobaciones viven separados y la trazabilidad se vuelve costosa de reconstruir." },
+        { title: "Modelo integrado", body: "Los datos nacen vinculados y acompañan al fondo desde el ingreso hasta el cierre." }
+      ]),
+      pilares: m("Tres pilares sostienen el sistema", "Trazabilidad, control e inmutabilidad se diseñan como reglas visibles, no como promesas abstractas.", [
+        { title: "Trazabilidad", body: "Cada donación y cada gasto conservan identidad, contexto y relación con el proyecto." },
+        { title: "Control", body: "La aprobación se reparte entre actores distintos para evitar decisiones opacas." },
+        { title: "Inmutabilidad", body: "Los eventos críticos se sellan para sostener verificabilidad posterior." }
+      ]),
+      compliance: m("La gobernanza exige trazabilidad comprobable", "El valor del sistema aumenta cuando la fundación necesita responder con evidencia ante terceros.", [
+        { title: "Internamente", body: "Ordena la revisión de directiva, finanzas y ejecución con una sola historia operativa." },
+        { title: "Hacia afuera", body: "Facilita responder con registros, estados y evidencia, no solo con narrativas." },
+        { title: "En continuidad", body: "Permite sostener memoria institucional más allá de personas o archivos sueltos." }
+      ]),
+      regulators: m("Lectura regulatoria y documental", "La presentación debe hablar de trazabilidad, evidencia y consistencia, que son los puntos que más valoran revisión interna y externa.", [
+        { title: "SUNAT", body: "Ayuda a sostener la relación entre operación, documentación y soporte del gasto." },
+        { title: "APCI", body: "Fortalece la capacidad de demostrar uso, destino y orden del fondo en proyectos." },
+        { title: "Auditoría", body: "Conecta historial, responsables, estados y evidencia en un mismo flujo consultable." }
+      ]),
+      cases: m("Referentes que ordenan confianza institucional", "La venta se apoya mejor en principios verificables que en cifras grandilocuentes no contractuales.", [
+        { title: "Transparencia recurrente", body: "Dar seguimiento continuo al aporte mejora confianza y reduce fricción de reporte." },
+        { title: "Control previo", body: "Ordenar la aprobación antes de ejecutar baja el margen para errores y ambigüedades." },
+        { title: "Evidencia centralizada", body: "Unir documentos, aprobaciones y cierres fortalece la postura institucional." }
+      ]),
+      modulos: m("Componentes del Módulo Básico", "El sistema funciona como una cadena: ingreso, control, rendición, sello, acceso, captación y lectura ejecutiva.", [
+        { title: "Módulos 1 al 4", body: "Trazabilidad, semáforo, rendición de campo y notario digital forman el núcleo de evidencia." },
+        { title: "Módulos 5 al 7", body: "Acceso, captación y dashboard hacen operable el sistema para toda la organización." }
+      ], ["Cada módulo tiene una misión clara.", "Todos comparten el mismo hilo de datos.", "La propuesta vende un sistema, no piezas aisladas."]),
+      arquitectura: m("Arquitectura global del sistema", "La cadena técnica explica la cadena de confianza: interfaz clara, reglas de negocio, datos vivos y capa de verificación.", [
+        { title: "Frontend", body: "Portal del donante, panel ejecutivo, bandeja de aprobaciones y webapp de campo." },
+        { title: "Backend", body: "Reglas de negocio, permisos, trazabilidad, estados y generación de registros auditables." },
+        { title: "Base y sello", body: "La operación vive en base de datos y la evidencia crítica se sella externamente." }
+      ]),
+      stack: m("Stack tecnológico al servicio del control", "La tecnología se explica solo en la medida en que ayuda a entender seguridad, claridad y escalabilidad.", [
+        { title: "NestJS", body: "Centraliza reglas, validaciones y procesos del sistema." },
+        { title: "React", body: "Entrega vistas claras para cada rol del sistema." },
+        { title: "PostgreSQL + Polygon", body: "Una capa conserva la operación; la otra sella evidencia crítica." }
+      ]),
+      donationFlow: m("Flujo de una donación", "El aporte entra con identidad, se relaciona con proyecto y termina con historia consultable.", [
+        { title: "Registro", body: "El aporte se asocia a canal, fecha, monto, proyecto y datos relevantes." },
+        { title: "Código", body: "El sistema genera un identificador que acompaña toda la vida del fondo." },
+        { title: "Seguimiento", body: "El donante y la organización pueden leer avance, estados y evidencia." }
+      ]),
+      roles: m("Roles y permisos", "La gobernanza mejora cuando cada actor puede hacer lo que le corresponde y nada más.", [
+        { title: "Administración", body: "Configura estructura, seguridad, catálogos y parámetros clave." },
+        { title: "Gobierno y finanzas", body: "Revisan, validan y aprueban con huella institucional." },
+        { title: "Ejecución y consulta", body: "Ejecutores cargan evidencia; donantes consultan su propia trazabilidad." }
+      ]),
+      security: m("Seguridad en capas", "La confianza del sistema no depende de un solo control, sino de varias barreras complementarias.", [
+        { title: "Autenticación", body: "Protege el ingreso y el uso de sesiones." },
+        { title: "Autorización", body: "Segmenta vistas y acciones por rol." },
+        { title: "Sellado", body: "Respalda integridad de eventos críticos con evidencia verificable." }
+      ]),
+      dashboard: m("Dashboard, alertas y lectura ejecutiva", "El panel central no es un adorno. Es la superficie donde se leen saldos, riesgos, pendientes y decisiones por tomar.", [
+        { title: "Lectura ejecutiva", body: "Muestra disponible, comprometido, ejecutado y frentes prioritarios." },
+        { title: "Lectura operativa", body: "Expone solicitudes, rendiciones, alertas y estados en curso." },
+        { title: "Salida documental", body: "Permite consolidar reportes y lecturas más rápidas del sistema." }
+      ]),
+      integraciones: m("Integraciones y conexiones del Módulo Básico", "Las integraciones se entienden mejor como puentes operativos: entrada, notificación, evidencia y exportación.", [
+        { title: "Pasarela y captura", body: "Permite registrar ingresos desde los canales operativos definidos." },
+        { title: "Storage y documentación", body: "Conserva comprobantes, soportes y evidencia asociada." },
+        { title: "Exportación y lectura", body: "Facilita reportes internos y salidas que apoyan control y revisión." }
+      ]),
+      trazabilidad: m("Módulo 1: trazabilidad de fondos", "Trazabilidad significa que cada donación conserva identidad y contexto hasta su aplicación final.", [
+        { title: "Datos de origen", body: "Canal, monto, fecha, referencia, proyecto y donante cuando aplique." },
+        { title: "Datos de uso", body: "Partida, solicitud, aprobación, evidencia y estado de cierre." },
+        { title: "Consulta posterior", body: "Portal, historial, hash y lectura transversal para control." }
+      ]),
+      portalDonante: m("Portal privado del donante", "El portal vuelve tangible la transparencia: el aporte tiene estado, avance y evidencia sin exponer información ajena.", [
+        { title: "Qué muestra", body: "Proyecto, estado, hitos, evidencia, historial y sello verificable." },
+        { title: "Qué protege", body: "Datos sensibles de terceros y vistas que no corresponden al donante." },
+        { title: "Qué mejora", body: "Retención, legitimidad y menor dependencia de reportes manuales." }
+      ]),
+      historial: m("Historial, hash y verificabilidad", "La trazabilidad gana valor cuando se puede leer en línea de tiempo y sellar en un punto verificable.", [
+        { title: "Historial", body: "Ordena ingreso, aprobaciones, ejecución, evidencias y cierre." },
+        { title: "Hash", body: "Genera una huella digital única para eventos o documentos críticos." },
+        { title: "Verificación", body: "Permite demostrar que un estado específico existió de esa manera." }
+      ]),
+      verification: m("Verificabilidad pública sin abrir datos sensibles", "La verificación sirve cuando cualquier tercero puede comprobar integridad sin ver información que no le corresponde.", [
+        { title: "Público", body: "Puede validar la existencia e integridad de registros sellados." },
+        { title: "Privado", body: "Los datos operativos siguen protegidos por permisos y vistas controladas." }
+      ]),
+      semaforo: m("Módulo 2: semáforo de aprobaciones", "Rojo, amarillo y verde convierten la decisión de gasto en un recorrido auditable y visible.", [
+        { title: "Rojo", body: "La solicitud nace con objetivo, monto y soporte." },
+        { title: "Amarillo", body: "Finanzas revisa consistencia, saldo, calendario y pertinencia." },
+        { title: "Verde", body: "La directiva aprueba con nombre, fecha y hora exacta." }
+      ]),
+      solicitud: m("Solicitud, revisión y aprobación con datos suficientes", "Cada etapa necesita información concreta para evitar ambigüedad y sostener responsabilidad posterior.", [
+        { title: "Solicitud", body: "Descripción, monto, soporte y relación con proyecto o partida." },
+        { title: "Revisión", body: "Validación de saldo, documentación y consistencia con el plan." },
+        { title: "Aprobación", body: "Registro institucional del visto bueno y paso a ejecución." }
+      ]),
+      modalidades: m("Modalidades de gasto y control documental", "El sistema ordena tanto compras regulares como obras o servicios con distintos tipos de soporte.", [
+        { title: "Compras regulares", body: "Operaciones recurrentes con documentación más directa." },
+        { title: "Obras y servicios", body: "Procesos con más hitos, soporte y seguimiento valorizado." },
+        { title: "Calendario", body: "El gasto debe convivir con tiempo, fase y partida presupuestal." }
+      ]),
+      approval: m("Huella de aprobación y responsabilidad trazable", "La protección institucional nace cuando cada decisión deja identidad, momento y contexto verificable.", [
+        { title: "Firma interna", body: "La decisión final queda asociada al rol y al responsable." },
+        { title: "Registro exacto", body: "Nombre, fecha, hora y estado del proceso se conservan." },
+        { title: "Defensa institucional", body: "La directiva puede explicar qué aprobó y sobre qué base." }
+      ]),
+      rendicion: m("Módulo 3: webapp de rendición de campo", "La trazabilidad se vuelve creíble cuando la rendición es simple, usable y coherente con la operación real.", [
+        { title: "Carga de factura", body: "El ejecutor registra comprobantes vinculados al gasto aprobado." },
+        { title: "Evidencia de ejecución", body: "La operación queda respaldada con fotos o soportes del resultado." },
+        { title: "Alertas y seguimiento", body: "El sistema acompaña el cumplimiento y reduce olvidos." }
+      ]),
+      blockchain: m("Módulo 4: notario digital", "El sellado blockchain convierte eventos críticos en evidencia verificable hacia el futuro.", [
+        { title: "Sello", body: "Prueba criptográfica de existencia e integridad." },
+        { title: "Polygon", body: "Red de bajo costo y alta disponibilidad para sellado." },
+        { title: "Auditoría", body: "Fortalece revisiones posteriores con un punto de verificación externo." }
+      ]),
+      captacion: m("Módulo 6: captación omnicanal", "El sistema registra ingresos desde canales prácticos y los integra a una lectura ordenada y contrastable.", [
+        { title: "Canales", body: "Yape, Plin, transferencias y otros medios operativos definidos por la fundación." },
+        { title: "Registro", body: "Cada ingreso se vincula a comprobante, datos clave y estado interno." },
+        { title: "Contraste", body: "La organización valida manualmente la consistencia de la información cargada." }
+      ]),
+      module7: m("Módulo 7: panel ejecutivo, alertas y reportes", "El módulo cierra el ciclo con visibilidad consolidada para lectura diaria y toma de decisiones.", [
+        { title: "Panel", body: "Muestra saldos, pendientes, compromisos y focos de atención." },
+        { title: "Alertas", body: "Ayuda a priorizar vencimientos, rendiciones y aprobaciones." },
+        { title: "Reportes", body: "Facilita salidas internas y paquetes documentales útiles para revisión." }
+      ])
+    };
+
+    const slides = [
+      s("s01", "Fundación Hamuq · Módulo Básico", "Zero-Trust System", "Sistema digital de integridad para gestionar donaciones, aprobaciones, rendiciones y evidencia verificable.", "cover", "system", { theme: "teal", single: true, support: "Conecta trazabilidad, semáforo, webapp de campo, notaría digital, control de acceso, captación y dashboard en una sola operación.", tags: ["Módulo Básico", "5 roles", "Gobernanza digital"] }),
+      s("s02", "Contexto", "La confianza se gana mostrando recorrido", "Cuando el aporte no puede seguirse con claridad, la organización pierde fuerza frente a donantes, directiva y auditoría.", "bars", "crisisFraude", { theme: "orange", support: "Zero-Trust transforma esa necesidad en una historia operativa verificable." }),
+      s("s03", "Contexto", "La opacidad aparece en tres puntos críticos", "Ingreso, aprobación y rendición suelen separarse; allí nacen la duda y la fricción.", "triangle", "crisisFraude", { cards: [c("01", "Ingreso", "El aporte entra pero su lectura posterior se debilita.", "crisisFraude"), c("02", "Decisión", "La aprobación pierde contexto cuando no queda amarrada al fondo.", "solicitud"), c("03", "Cierre", "La rendición llega tarde o con soporte difícil de conectar.", "rendicion")] }),
+      s("s04", "Objeciones", "El donante necesita tres respuestas concretas", "Adónde fue, quién lo aprobó y cómo lo verifica. El producto debe resolver esas tres preguntas.", "question", "donationFlow", { theme: "orange", cardsWide: true, cards: [c("?", "Destino", "Ruta visible desde el ingreso hasta el proyecto y su evidencia.", "donationFlow"), c("!", "Responsable", "Cadena de aprobación con nombres, roles y tiempos.", "approval"), c("✓", "Verificación", "Consulta y hash para sostener confianza posterior.", "verification")] }),
+      s("s05", "Enfoque", "La propuesta cambia el método de trabajo", "No depende de reportes reactivos. Depende de datos vinculados desde el primer momento.", "split", "comparativa", { comparison: true }),
+      s("s06", "Base conceptual", "Tres pilares sostienen la solución", "Trazabilidad, control e inmutabilidad ordenan el sistema de punta a punta.", "rings", "pilares", { theme: "teal", cards: [c("T", "Trazabilidad", "Cada movimiento conserva identidad y contexto.", "pilares"), c("C", "Control", "Cada decisión atraviesa pasos visibles.", "semaforo"), c("I", "Inmutabilidad", "La evidencia crítica puede verificarse después.", "blockchain")] }),
+      s("s07", "Concepto", "Zero-Trust significa gobernar con datos verificables", "La confianza ya no descansa solo en personas o archivos; descansa en registros, permisos y evidencia conectada.", "shield", "system", { support: "El sistema convierte la operación financiera en una lectura comprobable." }),
+      s("s08", "Capas", "La seguridad se entiende por capas coordinadas", "Ingreso seguro, permisos por rol y sellado de evidencia trabajan juntos para proteger la historia del fondo.", "shield", "security", { theme: "orange", cards: [c("A", "Autenticación", "Acceso controlado a las vistas y acciones del sistema.", "security"), c("P", "Permisos", "Cada actor ve lo que necesita y nada más.", "roles"), c("H", "Sellado", "La evidencia crítica se respalda para verificación posterior.", "blockchain")] }),
+      s("s09", "Transparencia", "Transparencia útil y privacidad selectiva", "El sistema permite mostrar el destino del aporte sin abrir datos internos o sensibles que no corresponden.", "portal", "portalDonante", { support: "Ese equilibrio aumenta confianza y reduce sobreexposición operativa." }),
+      s("s10", "Gobernanza", "La trazabilidad fortalece la lectura institucional", "Directiva, finanzas y ejecución pasan a trabajar sobre la misma línea de evidencia y estados.", "architecture", "compliance", { theme: "teal", support: "Eso hace más defendible cada decisión relevante del sistema." }),
+      s("s11", "Cumplimiento", "La organización necesita responder con evidencia", "El valor del sistema aumenta cuando hace más fácil explicar origen, uso, soporte y responsables de cada decisión.", "trace", "compliance", { support: "La propuesta vende consistencia documental, no promesas vacías." }),
+      s("s12", "Documentación", "Fondos y revisiones exigentes piden orden verificable", "El sistema crea una base más sólida para sostener revisiones internas y externas sobre el uso de los fondos.", "dashboard", "regulators", { theme: "orange", support: "La clave es mostrar estructura, continuidad y rastros, no improvisación documental." }),
+      s("s13", "Perú", "La conversación regulatoria se apoya en trazabilidad", "SUNAT, APCI y auditorías valoran que el sistema conecte operación, soporte y lectura posterior.", "roles", "regulators", { support: "Zero-Trust fortalece esa conexión con reglas y evidencia visibles." }),
+      s("s14", "Referente", "La confianza crece cuando la evidencia es recurrente", "La fundación gana mejor postura cuando puede mostrar estados, responsables y soporte sin reconstrucciones tardías.", "benefits", "cases", { theme: "orange", support: "Ese es el valor comercial y reputacional del sistema." }),
+      s("s15", "Transición", "La solución es una plataforma de integridad operativa", "No es un formulario ni un reporte. Es una arquitectura de control para el Módulo Básico.", "cover", "system", { theme: "teal", support: "Desde aquí entramos a la visión completa del sistema." }),
+
+      s("s16", "Visión general", "Los componentes del Módulo Básico trabajan como un solo sistema", "Cada componente resuelve una parte del problema, pero todos comparten el mismo hilo de datos y evidencia.", "modules", "modulos", { cardsThree: true, cards: [c("1", "Trazabilidad", "Código único, relación con proyecto y lectura del fondo.", "trazabilidad"), c("2", "Semáforo", "Solicitud, revisión y aprobación con huella.", "semaforo"), c("3", "Rendición", "Carga de comprobantes y evidencia de campo.", "rendicion"), c("4", "Notario", "Sello verificable para eventos críticos.", "blockchain"), c("5", "Acceso", "Roles y permisos según responsabilidad.", "roles"), c("6", "Captación", "Registro y contraste de ingresos.", "captacion")] }),
+      s("s17", "Arquitectura", "Arquitectura global del sistema", "La capa de interfaz, la capa de negocio y la capa de evidencia se organizan para sostener claridad y control.", "architecture", "arquitectura", { theme: "teal", cards: [c("UI", "Frontend", "Portal del donante, webapp de campo y panel ejecutivo.", "arquitectura"), c("API", "Backend", "Reglas, permisos, estados y trazabilidad centralizada.", "arquitectura"), c("EV", "Evidencia", "Base de datos operativa y sellado de eventos críticos.", "arquitectura")] }),
+      s("s18", "Stack", "Tecnología orientada a claridad y defensa", "React, NestJS, PostgreSQL y Polygon se usan para entregar orden operativo y verificabilidad.", "architecture", "stack", { theme: "teal", cards: [c("FE", "React", "Vistas claras para cada rol del sistema.", "stack"), c("BE", "NestJS", "Reglas y procesos que sostienen control.", "stack"), c("DB", "PostgreSQL + Polygon", "Operación viva y sello verificable.", "stack")] }),
+      s("s19", "Flujo", "Una donación entra, se codifica y puede seguirse", "El recorrido general del fondo se entiende mejor cuando se ve como una secuencia corta, clara y consultable.", "donationFlow", "donationFlow", { flow: [f("Paso 1", "Ingreso", "El aporte se registra con datos esenciales y canal."), f("Paso 2", "Código único", "Se crea la identidad que acompañará al fondo."), f("Paso 3", "Asignación", "El fondo se relaciona con proyecto y partida."), f("Paso 4", "Consulta", "La historia queda lista para seguimiento y verificación.")] }),
+      s("s20", "Roles", "Roles y permisos del sistema", "La gobernanza mejora cuando cada actor opera dentro de una vista y un alcance definidos.", "roles", "roles", { theme: "orange", roles: [r("SuperAdmin", "Administra estructura, seguridad y parámetros del sistema."), r("Directiva", "Aprueba y deja huella institucional."), r("Finanzas", "Valida saldo, consistencia y soporte."), r("Ejecutor", "Solicita, carga evidencia y rinde."), r("Donante", "Consulta su propia trazabilidad.")] }),
+      s("s21", "Protección", "Tres capas sostienen la protección funcional", "Autenticación, autorización y sellado convierten la operación en una lectura más segura y verificable.", "shield", "security", { cards: [c("1", "Ingreso", "El acceso se protege desde el inicio.", "security"), c("2", "Permisos", "Cada rol tiene acciones delimitadas.", "roles"), c("3", "Verificación", "Los eventos críticos pueden contrastarse después.", "blockchain")] }),
+      s("s22", "Notario", "Polygon aporta una capa de verificabilidad", "La red se usa para sellar eventos y documentos críticos con una huella independiente del sistema.", "blockchain", "blockchain", { theme: "teal", support: "El beneficio está en la verificabilidad, no en agregar complejidad innecesaria." }),
+      s("s23", "Panel", "El dashboard central sintetiza el estado del sistema", "Disponible, comprometido, ejecutado y alertas conviven para acelerar lectura y decisión.", "dashboard", "dashboard", { metrics: [["Módulo Básico", "Operando como una sola lectura ejecutiva."], ["5 roles", "Mirando el mismo sistema desde permisos distintos."], ["1 panel", "Para estados, riesgos y pendientes clave."]] }),
+      s("s24", "Conexiones", "Las integraciones acompañan la operación", "Captura, documentación, almacenamiento, notificaciones y exportación se integran alrededor del flujo principal.", "modules", "integraciones", { theme: "orange", cards: [c("IN", "Ingreso", "Canales de captación y registro de aportes.", "integraciones"), c("ST", "Storage", "Comprobantes y soportes del sistema.", "integraciones"), c("EX", "Exportación", "Reportes y paquetes documentales.", "integraciones")] }),
+      s("s25", "Resumen", "La visión completa cabe en una sola premisa", "Todo movimiento importante debe poder leerse, justificarse y verificarse dentro del mismo sistema.", "cover", "system", { support: "Con esa base empieza el detalle de cada módulo." }),
+
+      s("s26", "Módulo 1", "Trazabilidad de fondos", "El primer módulo convierte cada donación en un objeto identificable, relacionable y consultable.", "trace", "trazabilidad", { theme: "teal", support: "Su valor está en conservar contexto desde el ingreso hasta el cierre." }),
+      s("s27", "Código único", "Cada donación recibe una identidad propia", "El código único es la pieza que evita perder el hilo entre aporte, proyecto, soporte y consulta posterior.", "trace", "trazabilidad", { support: "Es el punto de partida de toda la trazabilidad." }),
+      s("s28", "Generación", "El código nace junto con el registro inicial", "No aparece al final del proceso. Nace cuando el aporte entra y se asocia a su contexto base.", "donationFlow", "donationFlow", { theme: "orange", flow: [f("Base", "Ingreso", "Se registran canal, fecha, monto y referencia."), f("Motor", "Codificación", "Se crea el identificador alfanumérico."), f("Uso", "Vinculación", "Se conecta con proyecto y partida."), f("Lectura", "Consulta", "Permite seguir la historia del fondo.")] }),
+      s("s29", "Captura", "La trazabilidad depende de datos bien capturados", "Origen, monto, fecha, proyecto y donante son piezas necesarias para sostener la historia del fondo.", "trace", "trazabilidad", { cards: [c("OR", "Origen", "Canal y referencia de ingreso del aporte.", "trazabilidad"), c("MO", "Monto", "Valor económico asociado al aporte.", "trazabilidad"), c("PR", "Proyecto", "Destino operativo o programático previsto.", "trazabilidad")] }),
+      s("s30", "Ruta del fondo", "El dinero puede rastrearse de origen a aplicación", "La fortaleza del módulo está en conservar la relación entre ingreso, uso y soporte posterior.", "donationFlow", "donationFlow", { theme: "teal", support: "Eso convierte el fondo en una historia defendible." }),
+      s("s31", "Partidas", "Proyecto y partida presupuestal forman parte de la historia", "La trazabilidad mejora cuando el uso del fondo queda amarrado a la estructura presupuestal correspondiente.", "dashboard", "trazabilidad", { support: "Así se lee mejor la finalidad del gasto." }),
+      s("s32", "Soporte", "Comprobantes y documentos quedan vinculados al fondo", "La documentación deja de vivir suelta cuando se ata a la donación, al gasto y al estado del proceso.", "portal", "historial", { theme: "orange", support: "Eso hace más rápida la lectura y más sólida la defensa institucional." }),
+      s("s33", "Portal", "El portal privado del donante abre una vista ordenada", "El sistema ofrece una lectura acotada para que el donante siga su aporte sin invadir información ajena.", "portal", "portalDonante", { support: "La transparencia se vuelve útil y sostenible." }),
+      s("s34", "Vista del donante", "El donante ve estado, avance, evidencia e historial", "La consulta se construye sobre proyecto, hitos, soportes y verificación, no sobre reportes improvisados.", "portal", "portalDonante", { theme: "teal", support: "Ese es uno de los activos comerciales más claros del sistema." }),
+      s("s35", "Historial", "Cada donación puede leerse como una línea de tiempo", "Ingreso, asignación, aprobaciones, rendiciones y cierre quedan conectados para lectura posterior.", "trace", "historial", { support: "La memoria institucional pasa a depender menos de archivos dispersos." }),
+      s("s36", "Hash", "Los eventos críticos pueden sellarse con una huella única", "El hash permite probar integridad de información relevante y fortalecer verificabilidad posterior.", "blockchain", "historial", { theme: "orange", support: "Es una pieza de defensa, no un adorno técnico." }),
+      s("s37", "Verificación", "La verificabilidad pública no exige abrir todo", "Es posible demostrar integridad sin exponer datos internos o sensibles de la operación.", "shield", "verification", { support: "Allí se combinan transparencia y privacidad selectiva." }),
+      s("s38", "Caso de uso", "Una donación para un proyecto específico puede seguirse completa", "Desde que entra hasta que se aplica, el sistema conserva proyecto, soporte, responsable y estado de cierre.", "donationFlow", "donationFlow", { theme: "teal", support: "El módulo 1 vende claridad concreta, no teoría." }),
+
+      s("s39", "Módulo 2", "Semáforo de aprobaciones", "El segundo módulo ordena la decisión de gasto como un proceso visible, responsable y trazable.", "semaphore", "semaforo", { theme: "orange", support: "Su valor está en controlar antes de ejecutar." }),
+      s("s40", "Tres pasos", "Rojo, amarillo y verde resumen la gobernanza", "La lógica del semáforo es simple de explicar y poderosa para operar.", "trafficBoard", "semaforo", { flow: [f("Rojo", "Solicitud", "La necesidad se registra con objetivo, monto y soporte."), f("Amarillo", "Revisión", "Finanzas valida consistencia y disponibilidad."), f("Verde", "Aprobación", "La directiva deja el visto bueno institucional."), f("Salida", "Ejecución", "La operación avanza con una historia previa ordenada.")] }),
+      s("s41", "Paso rojo", "La solicitud de gasto nace con contexto", "El sistema obliga a registrar por qué se solicita, cuánto, para qué proyecto y con qué soporte base.", "semaphore", "solicitud", { theme: "orange", support: "Ese primer paso marca la calidad del resto del proceso." }),
+      s("s42", "Campos", "La solicitud debe incluir datos suficientes", "Descripción, monto, cotización o soporte y relación con proyecto son piezas mínimas del flujo.", "trafficBoard", "solicitud", { cards: [c("DS", "Descripción", "Qué se necesita y con qué objetivo operativo.", "solicitud"), c("MN", "Monto", "Valor esperado para la solicitud.", "solicitud"), c("SP", "Soporte", "Documento o referencia que sustenta la necesidad.", "solicitud")] }),
+      s("s43", "Estado", "El sistema distingue fondos disponibles y comprometidos", "La lectura correcta del saldo evita aprobar gastos sin entender el estado actual del fondo.", "dashboard", "dashboard", { theme: "teal", support: "Esa diferencia es clave para tomar mejores decisiones." }),
+      s("s44", "Modalidad A", "Compras regulares siguen una ruta de soporte simple", "Medicinas, insumos y compras recurrentes requieren un flujo claro, breve y documentado.", "semaphore", "modalidades", { support: "La simplicidad también necesita trazabilidad." }),
+      s("s45", "Modalidad B", "Obras y servicios exigen más hitos y lectura valorizada", "Cuando el gasto se reparte en fases, el sistema debe relacionarlo con avance, soporte y calendario.", "dashboard", "modalidades", { theme: "orange", support: "Por eso el semáforo también conversa con valorización y fases." }),
+      s("s46", "Paso amarillo", "La revisión financiera da consistencia al flujo", "Finanzas valida saldo, documentos, pertinencia y relación con proyecto antes de avanzar.", "semaphore", "solicitud", { support: "La decisión deja de depender de intuición o memoria." }),
+      s("s47", "Saldos", "La validación de saldos protege el proceso", "Antes de aprobar, el sistema debe ayudar a leer si existe disponibilidad real dentro del estado registrado.", "dashboard", "dashboard", { theme: "teal", support: "Así se protege la calidad de la ejecución posterior." }),
+      s("s48", "Cotizaciones", "La congruencia documental forma parte del control", "El semáforo también sirve para contrastar soporte, coherencia y pertinencia de lo solicitado.", "trafficBoard", "modalidades", { support: "No se trata solo de autorizar, sino de revisar mejor." }),
+      s("s49", "Calendario", "El gasto debe conversar con la fase valorizada", "Tiempo, fase y partida presupuestal ayudan a ordenar cuándo tiene sentido aprobar y ejecutar.", "dashboard", "modalidades", { theme: "orange", support: "Eso refuerza control operativo y claridad presupuestal." }),
+      s("s50", "Paso verde", "La aprobación directiva deja una huella institucional", "El visto bueno final deja rastro de quién aprobó, cuándo y sobre qué información.", "semaphore", "approval", { support: "Allí se fortalece la defensa posterior de la decisión." }),
+      s("s51", "Firma interna", "La firma digital interna ordena responsabilidad", "La aprobación ya no vive solo en un chat o un correo; queda integrada a la historia del sistema.", "trafficBoard", "approval", { theme: "teal", support: "Eso mejora claridad y continuidad institucional." }),
+      s("s52", "Registro", "Nombre, fecha y hora quedan asociados a la decisión", "El detalle temporal y personal vuelve más clara la historia de aprobación del gasto.", "trace", "approval", { support: "Cada paso gana mayor trazabilidad." }),
+      s("s53", "Cadena de custodia", "Cada firma y cada revisión se vuelven trazables", "La responsabilidad deja de ser difusa cuando cada actor queda ligado a su intervención.", "roles", "approval", { theme: "orange", support: "Ese es uno de los mayores valores de gobernanza del sistema." }),
+      s("s54", "Protección", "La directiva gana una mejor posición de defensa", "El sistema permite explicar qué se aprobó, sobre qué base y en qué momento del proceso.", "shield", "approval", { support: "Eso reduce ambigüedad institucional." }),
+      s("s55", "Resumen del módulo", "El flujo completo se entiende como una cadena visible", "Solicitud, revisión, aprobación y rendición quedan unidas bajo una sola lógica de control.", "semaphore", "semaforo", { theme: "teal", support: "Esa es la esencia del semáforo de aprobaciones." }),
+
+      s("s56", "Módulo 3", "WebApp de rendición de campo", "La tercera capa del sistema aterriza control y evidencia en la operación diaria del ejecutor.", "mobile", "rendicion", { theme: "teal", support: "Debe ser clara, breve y utilizable desde móvil o escritorio." }),
+      s("s57", "Responsive", "La rendición funciona en móvil y desktop", "La experiencia debe acompañar al ejecutor en oficina, en ruta o en el propio proyecto.", "mobile", "rendicion", { support: "Usabilidad y trazabilidad conviven en una sola vista." }),
+      s("s58", "Factura", "El ejecutor carga la foto del comprobante", "La factura o boleta se vincula al gasto aprobado para conservar continuidad documental.", "mobile", "rendicion", { theme: "orange", support: "La carga debe ser rápida y clara." }),
+      s("s59", "Evidencia", "La ejecución también se prueba con imagen o soporte", "No basta con el comprobante. El resultado de la acción necesita una evidencia asociada al proceso.", "mobile", "rendicion", { support: "Así se conecta gasto con realidad operativa." }),
+      s("s60", "Sello", "Fecha y hora fortalecen la lectura de rendición", "El sistema registra el momento de carga para ordenar la secuencia de evidencia y cierre.", "trace", "rendicion", { theme: "teal", support: "Eso mejora confianza y seguimiento." }),
+      s("s61", "Alertas", "Las alertas ayudan a sostener disciplina operativa", "El sistema acompaña el cumplimiento con recordatorios y estados sobre plazos de rendición.", "dashboard", "rendicion", { support: "La alerta correcta evita acumulación de pendientes." }),
+      s("s62", "Validación", "El sistema distingue validación automática y revisión humana", "Una parte verifica estructura y una parte confirma contenido y consistencia documental.", "shield", "rendicion", { theme: "orange", support: "Ambas lecturas se complementan dentro del flujo." }),
+      s("s63", "Historial", "La rendición deja una historia filtrable y consultable", "El sistema puede ordenar rendiciones por proyecto, ejecutor, estado o fecha para revisar mejor.", "dashboard", "rendicion", { support: "La operación se vuelve más fácil de seguir." }),
+
+      s("s64", "Módulo 4", "Notario digital", "El cuarto módulo protege eventos y documentos críticos con una huella verificable.", "blockchain", "blockchain", { theme: "teal", support: "Aporta una capa adicional de confianza y defensa documental." }),
+      s("s65", "Sello", "Un sello blockchain prueba existencia e integridad", "La lógica es similar a una certificación digital: demuestra que algo existía de esa manera en ese momento.", "blockchain", "blockchain", { support: "Eso fortalece verificación posterior." }),
+      s("s66", "Red", "Polygon funciona como capa de sellado eficiente", "La red aporta velocidad y costo razonable para registrar huellas de evidencia crítica.", "blockchain", "blockchain", { theme: "orange", support: "Su papel es respaldar verificabilidad, no complicar la operación." }),
+      s("s67", "Hash", "El hash convierte un estado en una huella única", "Cada cambio relevante puede representarse con una firma digital irrepetible y contrastable.", "trace", "historial", { support: "Eso refuerza la lectura de integridad." }),
+      s("s68", "Verificación", "Los registros pueden verificarse públicamente", "La comprobación de integridad no exige abrir el contenido operativo completo del sistema.", "portal", "verification", { theme: "teal", support: "La verificación se separa de la exposición de datos." }),
+      s("s69", "Integridad", "La alteración posterior pierde credibilidad frente al sello", "El valor del notario digital está en reforzar la imposibilidad práctica de cambiar historia sin dejar rastro.", "shield", "blockchain", { support: "Es una capa de confianza para el largo plazo." }),
+      s("s70", "Auditoría", "El módulo fortalece la postura ante revisión internacional", "Cuando la evidencia puede explicarse y verificarse mejor, la organización gana solidez frente a terceros exigentes.", "benefits", "blockchain", { theme: "orange", support: "Ese es su valor estratégico." }),
+
+      s("s71", "Módulo 5", "Control de acceso y roles", "El quinto módulo protege la operación segmentando vistas, acciones y responsabilidades.", "roles", "roles", { theme: "teal", support: "Es la base para que cada actor intervenga sin romper seguridad ni trazabilidad." }),
+      s("s72", "Detalle de roles", "Los 5 roles cubren gobierno, operación y consulta", "SuperAdmin, Directiva, Finanzas, Ejecutor y Donante forman el mapa humano del sistema.", "roles", "roles", { roles: [r("SuperAdmin", "Parametriza seguridad, estructura y catálogos."), r("Directiva", "Aprueba y deja huella institucional."), r("Finanzas", "Revisa saldo, documentación y consistencia."), r("Ejecutor", "Solicita, ejecuta y rinde."), r("Donante", "Consulta su propio aporte y su trazabilidad.")] }),
+      s("s73", "Autenticación", "JWT y bcrypt sostienen el acceso seguro", "La plataforma combina autenticación y protección de credenciales para asegurar el ingreso al sistema.", "shield", "security", { theme: "orange", support: "La seguridad de acceso convive con la claridad de permisos." }),
+      s("s74", "Módulo 6", "Captación omnicanal de ingresos", "El sistema registra aportes desde varios canales operativos y los inserta en la misma lectura central del fondo.", "income", "captacion", { support: "La captación deja de estar separada del control." }),
+      s("s75", "Métodos iniciales", "Yape, Plin y transferencias se integran al flujo", "Los canales más prácticos del día a día pueden formar parte del registro y seguimiento del aporte.", "income", "captacion", { theme: "teal", cards: [c("YP", "Yape", "Ingreso rápido con registro dentro del sistema.", "captacion"), c("PL", "Plin", "Canal práctico para activación temprana de aportes.", "captacion"), c("TR", "Transferencia", "Ingreso con comprobante y contraste posterior.", "captacion")] }),
+      s("s76", "Validación", "El ingreso se confirma con lectura manual estructurada", "La captación gana valor cuando el comprobante y la información cargada se contrastan antes de consolidarse.", "income", "captacion", { support: "La fundación mantiene control del dato que alimenta al sistema." }),
+      s("s77", "Flujo de ingreso", "El recorrido de una nueva donación inicia ordenado", "Canal, comprobante, validación, código único y asignación forman la ruta inicial del aporte.", "donationFlow", "captacion", { theme: "orange", flow: [f("Ingreso", "Canal", "El aporte entra desde un medio operativo reconocido."), f("Soporte", "Comprobante", "El documento o referencia se asocia al aporte."), f("Control", "Validación", "El equipo confirma consistencia del ingreso."), f("Registro", "Código", "La donación queda lista para seguirse.")] }),
+      s("s78", "Conciliación", "El contraste entre comprobante y cuenta registrada ordena la captura", "La integridad del sistema depende de que el ingreso cargado y la validación interna conversen correctamente.", "income", "captacion", { support: "Así se preserva la calidad de la trazabilidad desde el primer paso." }),
+      s("s79", "Módulo 7", "Dashboard, alertas y reportes", "El séptimo módulo consolida la información para lectura ejecutiva y seguimiento operativo continuo.", "dashboard", "module7", { theme: "teal", support: "Es la superficie de control para la organización." }),
+      s("s80", "Panel ejecutivo", "El panel de control concentra saldos, alertas y pendientes", "Disponible, comprometido, ejecutado y focos activos se leen mejor cuando viven en una vista consolidada.", "dashboard", "module7", { support: "Con esta capa, el Módulo Básico queda cerrado como sistema completo." })
+    ];
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function visualMarkup(type, modalKey = "") {
+      const clickable = modalKey ? ` is-clickable" data-modal="${escapeHtml(modalKey)}" tabindex="0" role="button` : "";
+      const shell = `<div class="visual-shell${clickable}">`;
+      const cta = modalKey ? `<span class="visual-cta">clic para ampliar</span>` : "";
+      const close = `${cta}</div>`;
+
+      switch (type) {
+        case "cover":
+          return `${shell}
+            <svg viewBox="0 0 500 360" role="img" aria-label="Mapa visual del sistema">
+              <defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0%" stop-color="#137f76"/><stop offset="100%" stop-color="#f58220"/></linearGradient></defs>
+              <circle cx="250" cy="180" r="110" fill="url(#g1)" opacity="0.16"/>
+              <circle cx="250" cy="180" r="82" fill="none" stroke="#137f76" stroke-width="3"/>
+              <circle cx="250" cy="180" r="48" fill="rgba(19,127,118,0.08)" stroke="#f58220" stroke-width="3"/>
+              <text x="250" y="170" text-anchor="middle" fill="#082f2d" font-family="Montserrat" font-size="20" font-weight="800">ZERO-TRUST</text>
+              <text x="250" y="196" text-anchor="middle" fill="#4f6172" font-family="Montserrat" font-size="13" font-weight="800">TRAZABILIDAD + CONTROL</text>
+              <g font-family="Montserrat" font-size="12" font-weight="800" fill="#082f2d">
+                <rect x="48" y="94" width="102" height="42" rx="18" fill="#fff" stroke="#d9e3eb"/><text x="99" y="120" text-anchor="middle">DONANTES</text>
+                <rect x="350" y="94" width="102" height="42" rx="18" fill="#fff" stroke="#d9e3eb"/><text x="401" y="120" text-anchor="middle">DIRECTIVA</text>
+                <rect x="44" y="244" width="116" height="42" rx="18" fill="#fff" stroke="#d9e3eb"/><text x="102" y="270" text-anchor="middle">EJECUCIÓN</text>
+                <rect x="338" y="244" width="122" height="42" rx="18" fill="#fff" stroke="#d9e3eb"/><text x="399" y="270" text-anchor="middle">VERIFICACIÓN</text>
+              </g>
+              <path d="M148 116 C180 90, 204 84, 220 90" fill="none" stroke="#137f76" stroke-width="3" stroke-linecap="round"/>
+              <path d="M280 90 C308 82, 336 88, 350 112" fill="none" stroke="#f58220" stroke-width="3" stroke-linecap="round"/>
+              <path d="M158 244 C188 270, 212 276, 226 272" fill="none" stroke="#f58220" stroke-width="3" stroke-linecap="round"/>
+              <path d="M276 272 C306 278, 340 268, 352 244" fill="none" stroke="#137f76" stroke-width="3" stroke-linecap="round"/>
+            </svg>${close}`;
+        case "bars":
+          return `${shell}
+            <svg viewBox="0 0 500 360" role="img" aria-label="Barreras operativas">
+              <g transform="translate(54 40)">
+                <line x1="0" y1="250" x2="386" y2="250" stroke="#b9c7d2" stroke-width="2"/>
+                <g>
+                  <rect x="28" y="78" width="82" height="172" rx="18" fill="#137f76"/>
+                  <rect x="152" y="112" width="82" height="138" rx="18" fill="#f58220"/>
+                  <rect x="276" y="144" width="82" height="106" rx="18" fill="#0f4d49"/>
+                </g>
+                <g font-family="Montserrat" font-size="13" font-weight="800" fill="#082f2d">
+                  <text x="69" y="66" text-anchor="middle">Origen</text>
+                  <text x="193" y="100" text-anchor="middle">Control</text>
+                  <text x="317" y="132" text-anchor="middle">Cierre</text>
+                </g>
+                <g font-family="Source Sans 3" font-size="13" fill="#4f6172">
+                  <text x="69" y="282" text-anchor="middle">Recorrido</text>
+                  <text x="193" y="282" text-anchor="middle">Aprobación</text>
+                  <text x="317" y="282" text-anchor="middle">Rendición</text>
+                </g>
+              </g>
+            </svg>${close}`;
+        case "triangle":
+          return `${shell}
+            <svg viewBox="0 0 500 360" role="img" aria-label="Triángulo de fricciones">
+              <path d="M250 56 L418 298 H82 Z" fill="rgba(19,127,118,0.08)" stroke="#137f76" stroke-width="3"/>
+              <circle cx="250" cy="74" r="32" fill="#fff" stroke="#f58220" stroke-width="3"/>
+              <circle cx="114" cy="286" r="32" fill="#fff" stroke="#137f76" stroke-width="3"/>
+              <circle cx="386" cy="286" r="32" fill="#fff" stroke="#137f76" stroke-width="3"/>
+              <g font-family="Montserrat" font-size="12" font-weight="800" fill="#082f2d">
+                <text x="250" y="78" text-anchor="middle">INGRESO</text>
+                <text x="114" y="290" text-anchor="middle">DECISIÓN</text>
+                <text x="386" y="290" text-anchor="middle">CIERRE</text>
+              </g>
+            </svg>${close}`;
+        case "question":
+          return `${shell}
+            <svg viewBox="0 0 500 360" role="img" aria-label="Preguntas clave">
+              <circle cx="130" cy="118" r="54" fill="#fff" stroke="#dc3f51" stroke-width="3"/><text x="130" y="135" text-anchor="middle" font-size="62" font-family="Montserrat" font-weight="800" fill="#dc3f51">?</text>
+              <circle cx="250" cy="180" r="62" fill="#fff" stroke="#f2a33c" stroke-width="3"/><text x="250" y="199" text-anchor="middle" font-size="74" font-family="Montserrat" font-weight="800" fill="#f2a33c">?</text>
+              <circle cx="372" cy="118" r="54" fill="#fff" stroke="#137f76" stroke-width="3"/><text x="372" y="135" text-anchor="middle" font-size="62" font-family="Montserrat" font-weight="800" fill="#137f76">?</text>
+              <path d="M172 140 C198 150, 214 158, 224 166" fill="none" stroke="#b9c7d2" stroke-width="2.5"/>
+              <path d="M328 146 C302 152, 290 160, 276 170" fill="none" stroke="#b9c7d2" stroke-width="2.5"/>
+            </svg>${close}`;
+        case "split":
+          return `${shell}
+            <svg viewBox="0 0 500 360" role="img" aria-label="Comparativa">
+              <rect x="28" y="40" width="192" height="280" rx="28" fill="#fff1ee" stroke="#f0c2bf"/>
+              <rect x="280" y="40" width="192" height="280" rx="28" fill="#edf9f7" stroke="#b7e3dc"/>
+              <text x="124" y="74" text-anchor="middle" fill="#dc3f51" font-family="Montserrat" font-size="16" font-weight="800">FRAGMENTADO</text>
+              <text x="376" y="74" text-anchor="middle" fill="#137f76" font-family="Montserrat" font-size="16" font-weight="800">INTEGRADO</text>
+              <g font-family="Source Sans 3" font-size="13" fill="#4f6172">
+                <text x="124" y="126" text-anchor="middle">Datos sueltos</text>
+                <text x="124" y="170" text-anchor="middle">Aprobaciones opacas</text>
+                <text x="124" y="214" text-anchor="middle">Rendición tardía</text>
+                <text x="124" y="258" text-anchor="middle">Más reconstrucción</text>
+                <text x="376" y="126" text-anchor="middle">Datos vinculados</text>
+                <text x="376" y="170" text-anchor="middle">Responsabilidad visible</text>
+                <text x="376" y="214" text-anchor="middle">Evidencia conectada</text>
+                <text x="376" y="258" text-anchor="middle">Más lectura ejecutiva</text>
+              </g>
+            </svg>${close}`;
+        case "rings":
+          return `${shell}
+            <svg viewBox="0 0 500 360" role="img" aria-label="Pilares">
+              <circle cx="250" cy="180" r="102" fill="none" stroke="#137f76" stroke-width="3"/>
+              <circle cx="250" cy="180" r="70" fill="none" stroke="#f58220" stroke-width="3"/>
+              <circle cx="250" cy="180" r="38" fill="rgba(19,127,118,0.08)" stroke="#0f4d49" stroke-width="3"/>
+              <g font-family="Montserrat" font-size="13" font-weight="800" fill="#082f2d">
+                <text x="250" y="112" text-anchor="middle">TRAZABILIDAD</text>
+                <text x="250" y="186" text-anchor="middle">CONTROL</text>
+                <text x="250" y="254" text-anchor="middle">INMUTABILIDAD</text>
+              </g>
+            </svg>${close}`;
+        case "architecture":
+          return `${shell}
+            <svg viewBox="0 0 500 360" role="img" aria-label="Arquitectura">
+              <rect x="34" y="132" width="96" height="56" rx="18" fill="#fff" stroke="#137f76" stroke-width="2.4"/>
+              <rect x="146" y="72" width="106" height="56" rx="18" fill="#fff" stroke="#137f76" stroke-width="2.4"/>
+              <rect x="146" y="232" width="106" height="56" rx="18" fill="#fff" stroke="#f58220" stroke-width="2.4"/>
+              <rect x="278" y="132" width="100" height="56" rx="18" fill="#fff" stroke="#0f4d49" stroke-width="2.4"/>
+              <rect x="394" y="132" width="74" height="56" rx="18" fill="#fff" stroke="#137f76" stroke-width="2.4"/>
+              <g fill="none" stroke="#b9c7d2" stroke-width="3.5" stroke-linecap="round">
+                <path d="M130 160 H146"/><path d="M252 100 H278"/><path d="M252 260 H278"/><path d="M378 160 H394"/>
+              </g>
+              <path d="M198 128 V232" fill="none" stroke="#f58220" stroke-width="3.5" stroke-linecap="round"/>
+              <g font-family="Montserrat" font-size="12" font-weight="800" fill="#082f2d">
+                <text x="82" y="164" text-anchor="middle">Frontend</text>
+                <text x="199" y="104" text-anchor="middle">Backend</text>
+                <text x="199" y="264" text-anchor="middle">Base</text>
+                <text x="328" y="164" text-anchor="middle">Sello</text>
+                <text x="431" y="164" text-anchor="middle">Vista</text>
+              </g>
+            </svg>${close}`;
+        case "modules":
+          return `${shell}
+            <svg viewBox="0 0 500 360" role="img" aria-label="Módulos">
+              <g fill="#fff" stroke-width="2.4">
+                <rect x="66" y="82" width="94" height="50" rx="16" stroke="#137f76"/><rect x="200" y="54" width="94" height="50" rx="16" stroke="#137f76"/><rect x="336" y="82" width="94" height="50" rx="16" stroke="#137f76"/>
+                <rect x="66" y="226" width="94" height="50" rx="16" stroke="#f58220"/><rect x="200" y="252" width="94" height="50" rx="16" stroke="#f58220"/><rect x="336" y="226" width="94" height="50" rx="16" stroke="#f58220"/>
+                <rect x="203" y="150" width="94" height="50" rx="16" stroke="#0f4d49"/>
+              </g>
+              <g font-family="Montserrat" font-size="11" font-weight="800" fill="#082f2d">
+                <text x="113" y="112" text-anchor="middle">Trazabilidad</text>
+                <text x="247" y="84" text-anchor="middle">Semáforo</text>
+                <text x="383" y="112" text-anchor="middle">Rendición</text>
+                <text x="113" y="256" text-anchor="middle">Notario</text>
+                <text x="247" y="282" text-anchor="middle">Acceso</text>
+                <text x="383" y="256" text-anchor="middle">Captación</text>
+                <text x="250" y="180" text-anchor="middle">Dashboard</text>
+              </g>
+            </svg>${close}`;
+        case "donationFlow":
+          return `${shell}
+            <svg viewBox="0 0 500 360" role="img" aria-label="Flujo de donación">
+              <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#137f76"/></marker></defs>
+              <g fill="#fff" stroke="#137f76" stroke-width="2.4">
+                <rect x="36" y="132" width="82" height="56" rx="18"/><rect x="142" y="78" width="98" height="56" rx="18"/><rect x="142" y="226" width="98" height="56" rx="18"/><rect x="274" y="132" width="98" height="56" rx="18"/><rect x="390" y="132" width="78" height="56" rx="18"/>
+              </g>
+              <g fill="none" stroke="#137f76" stroke-width="3.5" marker-end="url(#arrow)" stroke-linecap="round">
+                <path d="M118 160 H142"/><path d="M240 106 H274"/><path d="M240 254 H274"/><path d="M372 160 H390"/>
+              </g>
+              <path d="M191 134 V226" fill="none" stroke="#f58220" stroke-width="3.5" marker-end="url(#arrow)"/>
+              <g font-family="Montserrat" font-size="11" font-weight="800" fill="#082f2d">
+                <text x="77" y="164" text-anchor="middle">Ingreso</text>
+                <text x="191" y="110" text-anchor="middle">Código</text>
+                <text x="191" y="258" text-anchor="middle">Proyecto</text>
+                <text x="323" y="164" text-anchor="middle">Historial</text>
+                <text x="429" y="164" text-anchor="middle">Portal</text>
+              </g>
+            </svg>${close}`;
+        case "semaphore":
+        case "trafficBoard":
+          return `${shell}
+            <svg viewBox="0 0 500 360" role="img" aria-label="Semáforo">
+              <rect x="176" y="48" width="148" height="264" rx="36" fill="#20313b"/>
+              <circle cx="250" cy="106" r="38" fill="#dc3f51"/>
+              <circle cx="250" cy="180" r="38" fill="#f2a33c"/>
+              <circle cx="250" cy="254" r="38" fill="#1ca07c"/>
+              <g font-family="Montserrat" font-size="13" font-weight="800" fill="#fff">
+                <text x="250" y="111" text-anchor="middle">Solicitud</text>
+                <text x="250" y="185" text-anchor="middle">Revisión</text>
+                <text x="250" y="259" text-anchor="middle">Aprobación</text>
+              </g>
+            </svg>${close}`;
+        case "roles":
+          return `${shell}
+            <svg viewBox="0 0 500 360" role="img" aria-label="Roles">
+              <g fill="#fff" stroke="#137f76" stroke-width="2.4">
+                <rect x="184" y="34" width="132" height="56" rx="18"/><rect x="42" y="148" width="120" height="56" rx="18"/><rect x="190" y="148" width="120" height="56" rx="18"/><rect x="338" y="148" width="120" height="56" rx="18"/><rect x="184" y="260" width="132" height="56" rx="18"/>
+              </g>
+              <g fill="none" stroke="#b9c7d2" stroke-width="3" stroke-linecap="round">
+                <path d="M250 90 V126"/><path d="M250 126 H102 V148"/><path d="M250 126 V148"/><path d="M250 126 H398 V148"/><path d="M250 204 V260"/>
+              </g>
+              <g font-family="Montserrat" font-size="12" font-weight="800" fill="#082f2d">
+                <text x="250" y="67" text-anchor="middle">SuperAdmin</text>
+                <text x="102" y="181" text-anchor="middle">Directiva</text>
+                <text x="250" y="181" text-anchor="middle">Finanzas</text>
+                <text x="398" y="181" text-anchor="middle">Ejecutor</text>
+                <text x="250" y="293" text-anchor="middle">Donante</text>
+              </g>
+            </svg>${close}`;
+        case "shield":
+          return `${shell}
+            <svg viewBox="0 0 500 360" role="img" aria-label="Capas de seguridad">
+              <path d="M250 48 L362 88 V168 C362 244 317 295 250 316 C183 295 138 244 138 168 V88 Z" fill="rgba(19,127,118,0.1)" stroke="#137f76" stroke-width="3"/>
+              <path d="M250 88 L322 114 V170 C322 220 294 255 250 276 C206 255 178 220 178 170 V114 Z" fill="rgba(245,130,32,0.1)" stroke="#f58220" stroke-width="3"/>
+              <path d="M250 132 L282 144 V176 C282 198 270 216 250 226 C230 216 218 198 218 176 V144 Z" fill="#fff" stroke="#0f4d49" stroke-width="3"/>
+              <g font-family="Montserrat" font-size="13" font-weight="800">
+                <text x="250" y="111" text-anchor="middle" fill="#137f76">Autenticación</text>
+                <text x="250" y="160" text-anchor="middle" fill="#f58220">Permisos</text>
+                <text x="250" y="182" text-anchor="middle" fill="#0f4d49">Verificación</text>
+              </g>
+            </svg>${close}`;
+        case "trace":
+          return `${shell}
+            <svg viewBox="0 0 500 360" role="img" aria-label="Trazabilidad">
+              <path d="M66 180 C124 90, 198 90, 250 180 C302 270, 378 270, 434 180" fill="none" stroke="#137f76" stroke-width="5" stroke-linecap="round"/>
+              <circle cx="86" cy="180" r="18" fill="#f58220"/><circle cx="190" cy="118" r="18" fill="#137f76"/><circle cx="250" cy="180" r="18" fill="#0f4d49"/><circle cx="324" cy="244" r="18" fill="#f58220"/><circle cx="414" cy="180" r="18" fill="#137f76"/>
+              <g font-family="Montserrat" font-size="12" font-weight="800" fill="#082f2d">
+                <text x="86" y="214" text-anchor="middle">Origen</text>
+                <text x="190" y="92" text-anchor="middle">Código</text>
+                <text x="250" y="214" text-anchor="middle">Partida</text>
+                <text x="324" y="278" text-anchor="middle">Evidencia</text>
+                <text x="414" y="214" text-anchor="middle">Hash</text>
+              </g>
+            </svg>${close}`;
+        case "portal":
+          return `${shell}
+            <svg viewBox="0 0 500 360" role="img" aria-label="Portal del donante">
+              <rect x="88" y="34" width="324" height="292" rx="28" fill="#fff" stroke="#d9e3eb" stroke-width="2.5"/>
+              <rect x="112" y="60" width="276" height="42" rx="16" fill="#eff9f7"/>
+              <rect x="112" y="122" width="126" height="84" rx="18" fill="#fff3e6"/>
+              <rect x="258" y="122" width="130" height="84" rx="18" fill="#eef7ff"/>
+              <rect x="112" y="226" width="276" height="72" rx="18" fill="#f7f9fb"/>
+              <g font-family="Montserrat" font-size="12" font-weight="800">
+                <text x="250" y="86" text-anchor="middle" fill="#137f76">Mis donaciones · Proyecto · Estado</text>
+                <text x="175" y="150" text-anchor="middle" fill="#cb640f">Ruta del fondo</text>
+                <text x="323" y="150" text-anchor="middle" fill="#137f76">Hitos y evidencia</text>
+                <text x="250" y="254" text-anchor="middle" fill="#4f6172">Historial verificable y progreso visible</text>
+              </g>
+            </svg>${close}`;
+        case "mobile":
+          return `${shell}
+            <svg viewBox="0 0 500 360" role="img" aria-label="Webapp móvil">
+              <rect x="170" y="28" width="160" height="304" rx="34" fill="#1a2630"/>
+              <rect x="184" y="48" width="132" height="264" rx="24" fill="#fff"/>
+              <rect x="198" y="72" width="104" height="36" rx="14" fill="#ecfaf7"/>
+              <rect x="198" y="126" width="104" height="56" rx="16" fill="#fff0dc"/>
+              <rect x="198" y="194" width="104" height="56" rx="16" fill="#eef7ff"/>
+              <rect x="198" y="262" width="104" height="28" rx="14" fill="#137f76"/>
+              <g font-family="Montserrat" font-size="11" font-weight="800">
+                <text x="250" y="96" text-anchor="middle" fill="#137f76">Solicitud</text>
+                <text x="250" y="158" text-anchor="middle" fill="#cb640f">Factura</text>
+                <text x="250" y="226" text-anchor="middle" fill="#4f6172">Evidencia</text>
+                <text x="250" y="281" text-anchor="middle" fill="#fff">Enviar</text>
+              </g>
+            </svg>${close}`;
+        case "blockchain":
+          return `${shell}
+            <svg viewBox="0 0 500 360" role="img" aria-label="Red de verificación">
+              <g fill="#fff" stroke="#137f76" stroke-width="2.4">
+                <circle cx="250" cy="74" r="26"/><circle cx="132" cy="144" r="24"/><circle cx="368" cy="144" r="24"/><circle cx="182" cy="252" r="24"/><circle cx="318" cy="252" r="24"/><circle cx="250" cy="180" r="34" fill="#fff0dc" stroke="#f58220"/>
+              </g>
+              <g fill="none" stroke="#b9c7d2" stroke-width="3">
+                <path d="M250 100 V146"/><path d="M226 170 H156"/><path d="M274 170 H344"/><path d="M230 202 L194 236"/><path d="M270 202 L306 236"/>
+              </g>
+              <g font-family="Montserrat" font-size="12" font-weight="800" fill="#082f2d">
+                <text x="250" y="186" text-anchor="middle">HASH</text><text x="250" y="79" text-anchor="middle">Registro</text>
+              </g>
+            </svg>${close}`;
+        case "income":
+          return `${shell}
+            <svg viewBox="0 0 500 360" role="img" aria-label="Canales de ingreso">
+              <rect x="60" y="88" width="114" height="74" rx="24" fill="#fff" stroke="#137f76" stroke-width="2.4"/>
+              <rect x="194" y="88" width="114" height="74" rx="24" fill="#fff" stroke="#f58220" stroke-width="2.4"/>
+              <rect x="328" y="88" width="114" height="74" rx="24" fill="#fff" stroke="#137f76" stroke-width="2.4"/>
+              <rect x="154" y="220" width="192" height="84" rx="28" fill="#eff9f7" stroke="#0f4d49" stroke-width="2.4"/>
+              <g font-family="Montserrat" font-size="14" font-weight="800" fill="#082f2d">
+                <text x="117" y="130" text-anchor="middle">Yape / Plin</text><text x="251" y="130" text-anchor="middle">Transferencia</text><text x="385" y="130" text-anchor="middle">Otro canal</text>
+                <text x="250" y="258" text-anchor="middle">Validación</text><text x="250" y="279" text-anchor="middle" fill="#4f6172" font-size="12">Comprobante + registro interno</text>
+              </g>
+              <g fill="none" stroke="#b9c7d2" stroke-width="3">
+                <path d="M117 162 V220"/><path d="M251 162 V220"/><path d="M385 162 V220"/>
+              </g>
+            </svg>${close}`;
+        case "dashboard":
+          return `${shell}
+            <svg viewBox="0 0 500 360" role="img" aria-label="Dashboard ejecutivo">
+              <rect x="54" y="42" width="392" height="276" rx="28" fill="#fff" stroke="#d9e3eb" stroke-width="2.5"/>
+              <rect x="80" y="72" width="102" height="72" rx="20" fill="#ecfaf7"/>
+              <rect x="198" y="72" width="102" height="72" rx="20" fill="#fff0dc"/>
+              <rect x="316" y="72" width="102" height="72" rx="20" fill="#eef7ff"/>
+              <rect x="80" y="170" width="338" height="122" rx="22" fill="#f7f9fb"/>
+              <g font-family="Montserrat" font-size="12" font-weight="800">
+                <text x="131" y="104" text-anchor="middle" fill="#137f76">Disponible</text>
+                <text x="249" y="104" text-anchor="middle" fill="#cb640f">Comprometido</text>
+                <text x="367" y="104" text-anchor="middle" fill="#4f6172">Ejecutado</text>
+              </g>
+              <polyline points="102,252 156,214 208,230 256,182 314,198 384,144" fill="none" stroke="#137f76" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>${close}`;
+        case "benefits":
+          return `${shell}
+            <svg viewBox="0 0 500 360" role="img" aria-label="Beneficios">
+              <path d="M84 262 L164 154 L232 202 L324 108 L416 178" fill="none" stroke="#137f76" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+              <g fill="#fff" stroke="#0f4d49" stroke-width="3">
+                <circle cx="84" cy="262" r="14"/><circle cx="164" cy="154" r="14"/><circle cx="232" cy="202" r="14"/><circle cx="324" cy="108" r="14"/><circle cx="416" cy="178" r="14"/>
+              </g>
+              <g font-family="Montserrat" font-size="12" font-weight="800" fill="#4f6172">
+                <text x="84" y="290" text-anchor="middle">Base</text><text x="164" y="138" text-anchor="middle">Control</text><text x="232" y="234" text-anchor="middle">Rendición</text><text x="324" y="92" text-anchor="middle">Confianza</text><text x="416" y="210" text-anchor="middle">Escala</text>
+              </g>
+            </svg>${close}`;
+        default:
+          return `${shell}${cta}</div>`;
+      }
+    }
+
+    function renderCards(items, className = "") {
+      const computedClass = `${className} ${!className.includes("cards-grid--three") && items.length === 3 ? "cards-grid--three" : ""}`.trim();
+      return `<div class="cards-grid ${computedClass}">${items.map(item => `
+        <article class="card">
+          <button class="hotspot" type="button" data-modal="${escapeHtml(item.modal)}">
+            <div class="card-icon">${escapeHtml(item.icon)}</div>
+            <h3>${escapeHtml(item.title)}</h3>
+            <p>${escapeHtml(item.text)}</p>
+            <span class="cta">clic para ampliar</span>
+          </button>
+        </article>
+      `).join("")}</div>`;
+    }
+
+    function renderMetrics(items) {
+      return `<div class="metrics-row">${items.map(([value, text]) => `
+        <article class="metric"><strong>${escapeHtml(value)}</strong><span>${escapeHtml(text)}</span></article>
+      `).join("")}</div>`;
+    }
+
+    function renderFlow(items, className) {
+      return `<div class="${className}">${items.map(item => `
+        <article class="${className === "role-row" ? "role-card" : "flow-node"}">
+          ${className === "role-row" ? "" : `<span class="step">${escapeHtml(item[0])}</span>`}
+          <strong>${escapeHtml(className === "role-row" ? item[0] : item[1])}</strong>
+          <span>${escapeHtml(className === "role-row" ? item[1] : item[2])}</span>
+        </article>
+      `).join("")}</div>`;
+    }
+
+    function renderComparison() {
+      return `
+        <div class="comparison">
+          <div class="comparison-box bad">
+            <h3>Fragmentado</h3>
+            <ul>
+              <li>Datos y decisiones separados.</li>
+              <li>Más reconstrucción manual.</li>
+              <li>Menos claridad para auditoría.</li>
+              <li>Más fricción de reporte.</li>
+            </ul>
+          </div>
+          <div class="comparison-box good">
+            <h3>Integrado</h3>
+            <ul>
+              <li>Datos vinculados desde el origen.</li>
+              <li>Control previo al gasto.</li>
+              <li>Evidencia conectada y consultable.</li>
+              <li>Más defensa institucional.</li>
+            </ul>
+          </div>
+        </div>`;
+    }
+
+    function renderSlide(slide, index) {
+      const centered = slide.single ? "centered" : "";
+      const bodyClass = slide.single ? "panel-body panel-body--single" : "panel-body";
+      const themeClass = slide.theme ? `panel--${slide.theme}` : "";
+      const cardsClass = `${slide.cardsThree ? "cards-grid--three" : ""} ${slide.cardsWide ? "cards-grid--wide" : ""}`.trim();
+      const left = `
+        <div class="copy-col ${centered}">
+          <div class="eyebrow">${escapeHtml(slide.eyebrow)}</div>
+          ${index === 0 ? `<h1>${escapeHtml(slide.title)}</h1>` : `<h2>${escapeHtml(slide.title)}</h2>`}
+          <p class="lede">${escapeHtml(slide.lede)}</p>
+          ${slide.support ? `<p class="support-line">${escapeHtml(slide.support)}</p>` : ""}
+          ${slide.tags ? `<div class="keyline">${slide.tags.map(tag => `<span class="tag${/roles|módulo/i.test(tag) ? " tag--warm" : ""}">${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
+          ${slide.metrics ? renderMetrics(slide.metrics) : ""}
+          ${slide.cards ? renderCards(slide.cards, cardsClass) : ""}
+          ${slide.flow ? renderFlow(slide.flow, "flow-row") : ""}
+          ${slide.roles ? renderFlow(slide.roles, "role-row") : ""}
+          ${slide.comparison ? renderComparison() : ""}
+        </div>`;
+      const visual = slide.visual ? `<div class="visual-col">${visualMarkup(slide.visual, slide.modal)}</div>` : "";
+      return `
+        <section class="panel ${themeClass}" data-index="${index}">
+          <div class="outer">
+            <div class="inner">
+              <div class="panel-bg"></div>
+              <div class="${bodyClass}">
+                ${left}
+                ${slide.single ? "" : visual}
+              </div>
+            </div>
+          </div>
+        </section>`;
+    }
+
+    document.getElementById("deck").innerHTML = slides.map(renderSlide).join("");
+
+    const sections = document.querySelectorAll(".panel");
+    const outerWrappers = gsap.utils.toArray(".outer");
+    const innerWrappers = gsap.utils.toArray(".inner");
+    const progressBar = document.getElementById("progressBar");
+    const counterText = document.getElementById("counterText");
+    const modalLayer = document.getElementById("modalLayer");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalIntro = document.getElementById("modalIntro");
+    const modalBody = document.getElementById("modalBody");
+    const modalClose = document.getElementById("modalClose");
+    const autoBtn = document.getElementById("autoBtn");
+
+    let currentIndex = -1;
+    let animating = false;
+    let autoMode = false;
+    let autoTimer = null;
+    const wrap = gsap.utils.wrap(0, sections.length);
+
+    gsap.set(outerWrappers, { yPercent: 100 });
+    gsap.set(innerWrappers, { yPercent: -100 });
+
+    function updateUi(index) {
+      counterText.textContent = `${index + 1} / ${slides.length}`;
+      progressBar.style.width = `${((index + 1) / slides.length) * 100}%`;
+    }
+
+    function animateElements(scope, direction) {
+      const items = scope.querySelectorAll(".eyebrow, h1, h2, .lede, .support-line, .tag, .metric, .card, .visual-shell, .flow-node, .role-card, .comparison-box");
+      gsap.fromTo(items, { autoAlpha: 0, yPercent: 22 * direction, scale: 0.985 }, {
+        autoAlpha: 1,
+        yPercent: 0,
+        scale: 1,
+        duration: 0.86,
+        ease: "power2.out",
+        stagger: 0.03,
+        overwrite: true
       });
-      
-      if (n >= totalSlides) currentSlide = 0;
-      if (n < 0) currentSlide = totalSlides - 1;
-      
-      slides[currentSlide].classList.add('active');
-      document.getElementById('currentSlide').textContent = currentSlide + 1;
-      
-      // GSAP Animation
-      gsap.from('.slide-inner', {
-        opacity: 0,
-        x: 50,
-        duration: 0.5
+    }
+
+    function gotoSection(index, direction) {
+      index = wrap(index);
+      if (animating) return;
+      animating = true;
+
+      const factor = direction === -1 ? -1 : 1;
+      const target = sections[index];
+      const targetBg = target.querySelector(".panel-bg");
+      const current = currentIndex >= 0 ? sections[currentIndex] : null;
+      const currentBg = current ? current.querySelector(".panel-bg") : null;
+
+      const tl = gsap.timeline({
+        defaults: { duration: 1.1, ease: "power2.inOut" },
+        onComplete: () => {
+          currentIndex = index;
+          updateUi(index);
+          animating = false;
+        }
       });
 
-      updateProgress();
+      if (current) {
+        gsap.set(current, { zIndex: 0 });
+        tl.to(currentBg, { yPercent: -8 * factor, scale: 1.04 }, 0)
+          .to(current, { autoAlpha: 0 }, 0.34);
+      }
+
+      gsap.set(target, { autoAlpha: 1, zIndex: 1 });
+      tl.fromTo([outerWrappers[index], innerWrappers[index]], {
+        yPercent: i => i ? -100 * factor : 100 * factor
+      }, { yPercent: 0 }, 0)
+        .fromTo(targetBg, { yPercent: 12 * factor, scale: 1.08 }, { yPercent: 0, scale: 1 }, 0);
+
+      animateElements(target, factor);
     }
 
-    function nextSlide() {
-      currentSlide++;
-      showSlide(currentSlide);
+    function startAuto() {
+      autoMode = true;
+      autoBtn.textContent = "Manual";
+      clearInterval(autoTimer);
+      autoTimer = setInterval(() => {
+        if (!animating && !modalLayer.classList.contains("active")) gotoSection(currentIndex + 1, 1);
+      }, 5000);
     }
 
-    function previousSlide() {
-      currentSlide--;
-      showSlide(currentSlide);
+    function stopAuto() {
+      autoMode = false;
+      autoBtn.textContent = "Auto";
+      clearInterval(autoTimer);
+      autoTimer = null;
     }
 
-    function updateSlide() {
-      showSlide(currentSlide);
+    function renderModalContent(entry) {
+      const boxes = entry.blocks ? `<div class="modal-grid">${entry.blocks.map(block => `
+        <div class="modal-box">
+          <h4>${escapeHtml(block.title)}</h4>
+          <p>${escapeHtml(block.body)}</p>
+        </div>`).join("")}</div>` : "";
+      const bullets = entry.bullets && entry.bullets.length ? `
+        <div class="modal-box">
+          <h4>Claves de lectura</h4>
+          <ul>${entry.bullets.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+        </div>` : "";
+      return boxes + bullets;
     }
 
-    function updateProgress() {
-      const progress = ((currentSlide + 1) / totalSlides) * 100;
-      gsap.to('#progress-bar', {width: progress + '%', duration: 0.3});
-    }
-
-    function openModal(id) {
-      const modal = document.getElementById('modal');
-      const modalContent = document.getElementById('modal-content');
-      const content = getModalContent(id);
-      
-      modalContent.innerHTML = content;
-      modal.classList.add('active');
-      
-      gsap.fromTo('.modal-box', 
-        {scale: 0.8, opacity: 0},
-        {scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.7)'}
-      );
+    function openModal(key) {
+      const entry = modalContent[key];
+      if (!entry) return;
+      modalTitle.textContent = entry.title;
+      modalIntro.textContent = entry.intro;
+      modalBody.innerHTML = renderModalContent(entry);
+      modalLayer.classList.add("active");
+      modalLayer.setAttribute("aria-hidden", "false");
+      stopAuto();
+      gsap.fromTo(".modal-card", { autoAlpha: 0, y: 28, scale: 0.96 }, {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.45,
+        ease: "back.out(1.5)"
+      });
     }
 
     function closeModal() {
-      const modal = document.getElementById('modal');
-      modal.classList.remove('active');
+      modalLayer.classList.remove("active");
+      modalLayer.setAttribute("aria-hidden", "true");
     }
 
-    function getModalContent(id) {
-      const contents = {
-        'donante-duda-1': '<h2>¿Adónde fue mi dinero?</h2><p>Sin un sistema digital, es imposible saber exactamente si tu donación fue a salud, educación o administrativo. Con Zero-Trust, cada centavo tiene un código único que lo sigue.</p>',
-        'donante-duda-2': '<h2>¿Qué tan seguro es?</h2><p>Reportes en Excel pueden alterarse. Transacciones manuales pueden perderse. Con blockchain, todo está registrado de forma imposible de cambiar.</p>',
-        'donante-duda-3': '<h2>¿Puedo verificarlo?</h2><p>Sí. Con Zero-Trust, cada donante puede ver en cualquier momento dónde está su dinero, en qué proyecto se gastó, qué evidencia hay.</p>',
-        'pilar-trazabilidad': '<h2>Trazabilidad</h2><p>Cada donación recibe un código alfanumérico único (ej: HAM-2026-03-001). Este código sigue el dinero desde que entra hasta que se gasta, registrando: origen, monto, proyecto, ejecutor, beneficiario.</p>',
-        'pilar-control': '<h2>Control</h2><p>El flujo de 3 pasos (Rojo/Amarillo/Verde) garantiza que cada gasto sea revisado antes de ejecutarse. Rojo: solicitud, Amarillo: revisión financiera, Verde: aprobación directiva.</p>',
-        'pilar-inmutabilidad': '<h2>Inmutabilidad</h2><p>Los registros importantes se sellan en blockchain (Polygon). Una vez sellado, es matemáticamente imposible cambiar el dato sin dejar evidencia. Incluso los desarrolladores no pueden modificarlo.</p>',
-        'modulo-1': '<h2>Módulo 1: Trazabilidad</h2><p>Genera un código único por donación. Sigue el dinero de origen a destino. Vincula comprobantes, proyectos y beneficiarios. Permite al donante verificar su aporte.</p>',
-        'modulo-2': '<h2>Módulo 2: Semáforo</h2><p>Implementa flujo de 3 pasos para aprobación de gastos. Luz Roja: solicitud. Luz Amarilla: revisión. Luz Verde: aprobación. Cada paso registra quién, cuándo, por qué.</p>',
-        'modulo-3': '<h2>Módulo 3: WebApp</h2><p>Aplicación responsiva para ejecutores de campo. Cargan fotos de facturas y evidencia de ejecución. Sistema sella automáticamente fecha y hora. Alertas cuando vence plazo de rendición.</p>',
-        'modulo-4': '<h2>Módulo 4: Notario Digital</h2><p>Sella registros en blockchain Polygon. Hash único e inmutable por transacción. Registros verificables públicamente sin revelar datos sensibles. Garantiza auditoría internacional.</p>',
-        'modulo-5': '<h2>Módulo 5: Control de Acceso</h2><p>5 roles: SuperAdmin, Directiva, Finanzas, Ejecutor, Donante. Cada uno ve solo lo que le corresponde. Autenticación JWT + bcrypt. Permisos granulares por acción.</p>',
-        'modulo-6': '<h2>Módulo 6: Ingresos</h2><p>Captación omnicanal: Transferencia, Yape, Plin. Donante sube comprobante. Encargado valida manualmente contra cuenta real. Solo si es válido, se registra en sistema.</p>',
-        'modulo-7': '<h2>Módulo 7: Dashboard</h2><p>Panel central con saldos en tiempo real. Alertas de rendiciones vencidas, solicitudes sin respuesta. Reportes internos exportables en CSV. Historial completo con sellos blockchain.</p>',
-        'rol-admin': '<h2>SuperAdmin (BlairCode)</h2><p>Acceso total al sistema. Configuración global, mantenimiento, actualizaciones. Hamuq no usa este rol directamente.</p>',
-        'rol-directiva': '<h2>Directiva</h2><p>Aprueba gastos grandes (definir monto límite). Firma digitalmente, registrando nombre, fecha, hora. Responsabilidad trazable. Protección legal documentada.</p>',
-        'rol-finanzas': '<h2>Finanzas</h2><p>Revisa solicitudes de gasto. Valida saldos disponibles, congruencia de cotizaciones, vigencia en calendario valorizado. Solo finanzas puede pasar a revisión amarilla.</p>',
-        'rol-ejecutor': '<h2>Ejecutor de Campo</h2><p>Solicita gastos. Carga fotos de facturas y evidencia. Rendición a través de WebApp. No puede ver gastos de otros ejecutores ni aprobar nada.</p>',
-        'rol-donante': '<h2>Donante</h2><p>Portal privado. Ve SOLO sus propias donaciones. Histórico completo: fecha, monto, proyecto, evidencia, hash blockchain. No puede ver donaciones de otros ni datos sensibles.</p>'
-      };
-      
-      return contents[id] || '<h2>Información</h2><p>Contenido no disponible</p>';
-    }
-
-    // Keyboard Navigation
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSlide();
-      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') previousSlide();
-      if (e.key === 'Escape') closeModal();
+    Observer.create({
+      type: "wheel,touch",
+      wheelSpeed: -1,
+      tolerance: 12,
+      preventDefault: true,
+      onDown: () => !animating && !modalLayer.classList.contains("active") && gotoSection(currentIndex + 1, 1),
+      onUp: () => !animating && !modalLayer.classList.contains("active") && gotoSection(currentIndex - 1, -1)
     });
 
-    // Modal Close on Backdrop Click
-    document.getElementById('modal').addEventListener('click', (e) => {
-      if (e.target.id === 'modal') closeModal();
+    document.getElementById("nextBtn").addEventListener("click", () => gotoSection(currentIndex + 1, 1));
+    document.getElementById("prevBtn").addEventListener("click", () => gotoSection(currentIndex - 1, -1));
+    autoBtn.addEventListener("click", () => autoMode ? stopAuto() : startAuto());
+
+    modalClose.addEventListener("click", closeModal);
+    modalLayer.addEventListener("click", event => {
+      if (event.target === modalLayer) closeModal();
     });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") closeModal();
+      if (modalLayer.classList.contains("active")) return;
+      if (event.key === "ArrowDown" || event.key === "ArrowRight") gotoSection(currentIndex + 1, 1);
+      if (event.key === "ArrowUp" || event.key === "ArrowLeft") gotoSection(currentIndex - 1, -1);
+      const modalTarget = document.activeElement?.dataset?.modal;
+      if ((event.key === "Enter" || event.key === " ") && modalTarget) openModal(modalTarget);
+    });
+
+    document.addEventListener("click", event => {
+      const trigger = event.target.closest("[data-modal]");
+      if (trigger) openModal(trigger.dataset.modal);
+    });
+
+    gotoSection(0, 1);
   </script>
 </body>
 </html>
