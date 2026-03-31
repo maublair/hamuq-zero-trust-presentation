@@ -229,6 +229,7 @@
     }
 
     .panel-body--single { grid-template-columns: minmax(0, 1fr); }
+    .panel-body--dense { align-items: start; padding-top: 12px; }
 
     .copy-col {
       max-width: 640px;
@@ -243,6 +244,12 @@
       margin: 0 auto;
       justify-items: center;
       text-align: center;
+    }
+
+    .copy-col.copy-col--dense {
+      max-width: 720px;
+      gap: 12px;
+      align-content: start;
     }
 
     .eyebrow {
@@ -331,8 +338,8 @@
     .metrics-row {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-      max-width: 760px;
+      gap: 12px;
+      max-width: 820px;
     }
 
     .metric, .card, .flow-node, .role-card, .comparison-box {
@@ -366,22 +373,22 @@
     .cards-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-      max-width: 760px;
+      gap: 12px;
+      max-width: 820px;
     }
 
     .cards-grid.cards-grid--three {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      max-width: 960px;
+      max-width: 820px;
     }
 
-    .cards-grid.cards-grid--wide { max-width: 960px; }
+    .cards-grid.cards-grid--wide { max-width: 860px; }
 
     .card {
-      padding: 20px;
-      min-height: 148px;
+      padding: 16px;
+      min-height: 124px;
       display: grid;
-      gap: 10px;
+      gap: 8px;
       align-content: start;
     }
 
@@ -398,7 +405,7 @@
       font-weight: 800;
     }
 
-    .card h3 { font-size: 1rem; line-height: 1.18; }
+    .card h3 { font-size: 0.94rem; line-height: 1.14; }
 
     .card button, .hotspot {
       width: 100%;
@@ -446,7 +453,7 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      min-height: 340px;
+      min-height: 300px;
     }
 
     .visual-shell {
@@ -502,15 +509,20 @@
     .flow-row, .role-row {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
+      gap: 12px;
       max-width: 920px;
     }
 
+    .role-row {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      max-width: 860px;
+    }
+
     .flow-node, .role-card {
-      padding: 18px;
-      min-height: 150px;
+      padding: 15px;
+      min-height: 128px;
       display: grid;
-      gap: 10px;
+      gap: 8px;
       align-content: start;
     }
 
@@ -531,14 +543,14 @@
     .comparison {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
+      gap: 14px;
       max-width: 920px;
     }
 
     .comparison-box {
-      padding: 22px;
+      padding: 18px;
       display: grid;
-      gap: 12px;
+      gap: 10px;
     }
 
     .comparison-box h3 { font-size: 1rem; }
@@ -635,7 +647,7 @@
     .nav-cluster {
       position: fixed;
       right: 20px;
-      bottom: 20px;
+      bottom: 14px;
       z-index: 35;
       display: flex;
       align-items: center;
@@ -702,7 +714,7 @@
     .scroll-hint {
       position: fixed;
       left: 20px;
-      bottom: 90px;
+      bottom: 18px;
       z-index: 35;
       display: inline-flex;
       align-items: center;
@@ -713,7 +725,7 @@
       border: 1px solid var(--line);
       box-shadow: 0 16px 35px rgba(7,45,44,0.12);
       color: var(--ink-700);
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       backdrop-filter: blur(16px);
     }
 
@@ -757,7 +769,7 @@
 
     @media (max-width: 1100px) {
       .panel-body { grid-template-columns: minmax(0, 1fr); }
-      .visual-col { min-height: 250px; }
+      .visual-col { min-height: 230px; }
       .metrics-row,
       .cards-grid.cards-grid--three,
       .flow-row,
@@ -1011,11 +1023,10 @@
       s("s14", "Referente", "La confianza crece cuando la evidencia es recurrente", "La fundación gana mejor postura cuando puede mostrar estados, responsables y soporte sin reconstrucciones tardías.", "benefits", "cases", { theme: "orange", support: "Ese es el valor comercial y reputacional del sistema." }),
       s("s15", "Transición", "La solución es una plataforma de integridad operativa", "No es un formulario ni un reporte. Es una arquitectura de control para el Módulo Básico.", "cover", "system", { theme: "teal", support: "Desde aquí entramos a la visión completa del sistema." }),
 
-      s("s16", "Visión general", "Los componentes del Módulo Básico trabajan como un solo sistema", "Cada componente resuelve una parte del problema, pero todos comparten el mismo hilo de datos y evidencia.", "modules", "modulos", { cardsThree: true, cards: [c("1", "Trazabilidad", "Código único, relación con proyecto y lectura del fondo.", "trazabilidad"), c("2", "Semáforo", "Solicitud, revisión y aprobación con huella.", "semaforo"), c("3", "Rendición", "Carga de comprobantes y evidencia de campo.", "rendicion"), c("4", "Notario", "Sello verificable para eventos críticos.", "blockchain"), c("5", "Acceso", "Roles y permisos según responsabilidad.", "roles"), c("6", "Captación", "Registro y contraste de ingresos.", "captacion")] }),
-      s("s17", "Arquitectura", "Arquitectura global del sistema", "La capa de interfaz, la capa de negocio y la capa de evidencia se organizan para sostener claridad y control.", "architecture", "arquitectura", { theme: "teal", cards: [c("UI", "Frontend", "Portal del donante, webapp de campo y panel ejecutivo.", "arquitectura"), c("API", "Backend", "Reglas, permisos, estados y trazabilidad centralizada.", "arquitectura"), c("EV", "Evidencia", "Base de datos operativa y sellado de eventos críticos.", "arquitectura")] }),
-      s("s18", "Stack", "Tecnología orientada a claridad y defensa", "React, NestJS, PostgreSQL y Polygon se usan para entregar orden operativo y verificabilidad.", "architecture", "stack", { theme: "teal", cards: [c("FE", "React", "Vistas claras para cada rol del sistema.", "stack"), c("BE", "NestJS", "Reglas y procesos que sostienen control.", "stack"), c("DB", "PostgreSQL + Polygon", "Operación viva y sello verificable.", "stack")] }),
-      s("s19", "Flujo", "Una donación entra, se codifica y puede seguirse", "El recorrido general del fondo se entiende mejor cuando se ve como una secuencia corta, clara y consultable.", "donationFlow", "donationFlow", { flow: [f("Paso 1", "Ingreso", "El aporte se registra con datos esenciales y canal."), f("Paso 2", "Código único", "Se crea la identidad que acompañará al fondo."), f("Paso 3", "Asignación", "El fondo se relaciona con proyecto y partida."), f("Paso 4", "Consulta", "La historia queda lista para seguimiento y verificación.")] }),
-      s("s20", "Roles", "Roles y permisos del sistema", "La gobernanza mejora cuando cada actor opera dentro de una vista y un alcance definidos.", "roles", "roles", { theme: "orange", roles: [r("SuperAdmin", "Administra estructura, seguridad y parámetros del sistema."), r("Directiva", "Aprueba y deja huella institucional."), r("Finanzas", "Valida saldo, consistencia y soporte."), r("Ejecutor", "Solicita, carga evidencia y rinde."), r("Donante", "Consulta su propia trazabilidad.")] }),
+      s("s16", "Visión general", "Los componentes del Módulo Básico trabajan como un solo sistema", "Cada componente resuelve una parte del problema, pero todos comparten el mismo hilo de datos y evidencia.", "modules", "modulos", { theme: "teal", cardsThree: true, dense: true, cards: [c("1", "Trazabilidad", "Código único, relación con proyecto y lectura del fondo.", "trazabilidad"), c("2", "Semáforo", "Solicitud, revisión y aprobación con huella.", "semaforo"), c("3", "Rendición", "Carga de comprobantes y evidencia de campo.", "rendicion"), c("4", "Notario", "Sello verificable para eventos críticos.", "blockchain"), c("5", "Acceso", "Roles y permisos según responsabilidad.", "roles"), c("6", "Captación", "Registro y contraste de ingresos.", "captacion")] }),
+      s("s17", "Arquitectura", "La plataforma conecta experiencia, control y evidencia", "Portal, panel, reglas de negocio, almacenamiento y sellado trabajan sobre una sola historia operativa.", "architecture", "arquitectura", { theme: "teal", dense: true, cards: [c("UI", "Experiencias", "Portal del donante, panel ejecutivo, bandejas y webapp de campo.", "arquitectura"), c("API", "Motor de control", "NestJS sostiene permisos, estados, aprobaciones, historial y consistencia.", "arquitectura"), c("DB", "Datos vivos", "PostgreSQL conserva el recorrido íntegro de cada fondo y cada gasto.", "arquitectura"), c("EV", "Sello externo", "Polygon respalda eventos críticos con una huella verificable.", "blockchain")] }),
+      s("s18", "Stack", "Tecnología orientada a claridad y defensa", "React, NestJS, PostgreSQL y Polygon se usan para entregar orden operativo y verificabilidad.", "architecture", "stack", { theme: "teal", dense: true, cards: [c("FE", "React", "Vistas claras para donantes, directiva, finanzas y ejecución.", "stack"), c("BE", "NestJS", "Reglas y procesos que sostienen control y consistencia.", "stack"), c("DB", "PostgreSQL", "Base operativa para fondos, solicitudes, rendiciones y estados.", "stack"), c("PL", "Polygon", "Capa de sellado para evidencias y registros críticos.", "stack")] }),
+      s("s19", "Flujo", "Una donación entra, se codifica y puede seguirse", "El recorrido general del fondo se entiende mejor cuando se ve como una secuencia corta, clara y consultable.", "donationFlow", "donationFlow", { dense: true, flow: [f("Paso 1", "Ingreso", "El aporte se registra con datos esenciales y canal."), f("Paso 2", "Código único", "Se crea la identidad que acompañará al fondo."), f("Paso 3", "Asignación", "El fondo se relaciona con proyecto y partida."), f("Paso 4", "Consulta", "La historia queda lista para seguimiento y verificación.")] }),
       s("s21", "Protección", "Tres capas sostienen la protección funcional", "Autenticación, autorización y sellado convierten la operación en una lectura más segura y verificable.", "shield", "security", { cards: [c("1", "Ingreso", "El acceso se protege desde el inicio.", "security"), c("2", "Permisos", "Cada rol tiene acciones delimitadas.", "roles"), c("3", "Verificación", "Los eventos críticos pueden contrastarse después.", "blockchain")] }),
       s("s22", "Notario", "Polygon aporta una capa de verificabilidad", "La red se usa para sellar eventos y documentos críticos con una huella independiente del sistema.", "blockchain", "blockchain", { theme: "teal", support: "El beneficio está en la verificabilidad, no en agregar complejidad innecesaria." }),
       s("s23", "Panel", "El dashboard central sintetiza el estado del sistema", "Disponible, comprometido, ejecutado y alertas conviven para acelerar lectura y decisión.", "dashboard", "dashboard", { metrics: [["Módulo Básico", "Operando como una sola lectura ejecutiva."], ["5 roles", "Mirando el mismo sistema desde permisos distintos."], ["1 panel", "Para estados, riesgos y pendientes clave."]] }),
@@ -1080,6 +1091,7 @@
       s("s77", "Flujo de ingreso", "El recorrido de una nueva donación inicia ordenado", "Canal, comprobante, validación, código único y asignación forman la ruta inicial del aporte.", "donationFlow", "captacion", { theme: "orange", flow: [f("Ingreso", "Canal", "El aporte entra desde un medio operativo reconocido."), f("Soporte", "Comprobante", "El documento o referencia se asocia al aporte."), f("Control", "Validación", "El equipo confirma consistencia del ingreso."), f("Registro", "Código", "La donación queda lista para seguirse.")] }),
       s("s78", "Conciliación", "El contraste entre comprobante y cuenta registrada ordena la captura", "La integridad del sistema depende de que el ingreso cargado y la validación interna conversen correctamente.", "income", "captacion", { support: "Así se preserva la calidad de la trazabilidad desde el primer paso." }),
       s("s79", "Módulo 7", "Dashboard, alertas y reportes", "El séptimo módulo consolida la información para lectura ejecutiva y seguimiento operativo continuo.", "dashboard", "module7", { theme: "teal", support: "Es la superficie de control para la organización." }),
+      s("s79a", "Priorización", "Las alertas convierten el panel en una herramienta de gestión", "Vencimientos, rendiciones pendientes, solicitudes por resolver y frentes críticos pueden priorizarse desde una sola vista.", "dashboard", "module7", { theme: "orange", cards: [c("AL", "Alertas", "Señales visibles para no perder hitos sensibles del flujo.", "module7"), c("PD", "Pendientes", "Lista operativa para revisar lo que requiere acción inmediata.", "module7"), c("RS", "Riesgos", "Lectura rápida de focos que merecen seguimiento ejecutivo.", "module7")] }),
       s("s80", "Panel ejecutivo", "El panel de control concentra saldos, alertas y pendientes", "Disponible, comprometido, ejecutado y focos activos se leen mejor cuando viven en una vista consolidada.", "dashboard", "module7", { support: "Con esta capa, el Módulo Básico queda cerrado como sistema completo." })
     ];
 
@@ -1452,11 +1464,12 @@
 
     function renderSlide(slide, index) {
       const centered = slide.single ? "centered" : "";
-      const bodyClass = slide.single ? "panel-body panel-body--single" : "panel-body";
+      const dense = slide.dense || slide.cards || slide.flow || slide.roles || slide.metrics || slide.comparison;
+      const bodyClass = `${slide.single ? "panel-body panel-body--single" : "panel-body"}${dense ? " panel-body--dense" : ""}`;
       const themeClass = slide.theme ? `panel--${slide.theme}` : "";
       const cardsClass = `${slide.cardsThree ? "cards-grid--three" : ""} ${slide.cardsWide ? "cards-grid--wide" : ""}`.trim();
       const left = `
-        <div class="copy-col ${centered}">
+        <div class="copy-col ${centered} ${dense ? "copy-col--dense" : ""}">
           <div class="eyebrow">${escapeHtml(slide.eyebrow)}</div>
           ${index === 0 ? `<h1>${escapeHtml(slide.title)}</h1>` : `<h2>${escapeHtml(slide.title)}</h2>`}
           <p class="lede">${escapeHtml(slide.lede)}</p>
